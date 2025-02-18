@@ -38,7 +38,7 @@ const CalendarComponent = () => {
     useEffect(() => {
         setTimeout(() => {
             setIsCalendarReady(true);
-        }, 100); // Delay for DOM readiness
+        }, 100);
     }, []);
     const showModal = () => {
         setIsShowModal(true);
