@@ -62,7 +62,7 @@ const CalendarComponent = () => {
             id: "",
             title: "",
             start: formatDateToLocal(arg.date),
-            end: formatDateToLocal(new Date(arg.date.getTime() + 60 * 60 * 1000)), // 1 hour later
+            end: formatDateToLocal(new Date(arg.date.getTime() + 60 * 60 * 1000)),
             type: "work"
         });
 
