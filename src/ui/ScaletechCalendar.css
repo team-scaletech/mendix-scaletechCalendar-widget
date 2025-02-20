@@ -1,2 +1,2 @@
-@import './Calendar.scss'
-
+@import './Calendar.scss';
+@import '../components/CustomCalendar/style/CustomCalendar.scss';
