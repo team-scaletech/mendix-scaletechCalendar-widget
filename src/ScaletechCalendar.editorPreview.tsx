@@ -1,9 +1,9 @@
 import { FC, ReactElement, createElement } from "react";
 import { ScaletechCalendarPreviewProps } from "../typings/ScaletechCalendarProps";
-import CalendarCustom from "./components/CustomCalendar/CustomCalendar";
+import EventCalendar from "./components/EventCalendar";
 
 export const preview: FC<ScaletechCalendarPreviewProps> = (): ReactElement => {
-    return <CalendarCustom />;
+    return <EventCalendar />;
 };
 
 export function getPreviewCss(): string {

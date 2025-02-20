@@ -3,23 +3,19 @@ import { ViewProps } from "../CustomCalendar";
 import Modal from "./Modal";
 
 const MonthView: React.FC<ViewProps> = ({ date, events }) => {
+    const [startTime, setStartTime] = useState<string>("");
+    const [endTime, setEndTime] = useState<string>("");
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
     const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
     const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
     const monthYear = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(date);
-    const [isShowModal, SetIsShowModal] = useState(false);
-    const [selectDate, setSelectDate] = useState("");
 
     const handleDayClick = (fullDate: string) => {
-        const currentTime = new Date().toLocaleTimeString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false // Use 24-hour format
-        });
-        SetIsShowModal(true);
-        console.warn("Selected Date & Time:", `${fullDate} ${currentTime}`);
-        setSelectDate(`${fullDate} ${currentTime}`);
+        setStartTime(`${fullDate}T00:00`); // Default start time
+        setEndTime(`${fullDate}T01:00`); // Default end time (1 hour later)
+        setIsModalOpen(true); // Open modal
     };
 
     return (
@@ -55,10 +51,11 @@ const MonthView: React.FC<ViewProps> = ({ date, events }) => {
                 })}
             </div>
             <Modal
-                isShowModal={isShowModal}
-                hideModal={() => SetIsShowModal(false)}
+                isShowModal={isModalOpen}
+                hideModal={() => setIsModalOpen(false)}
                 handleSubmit={() => console.warn("test")}
-                date={selectDate}
+                startTime={startTime}
+                endTime={endTime}
             />
         </div>
     );

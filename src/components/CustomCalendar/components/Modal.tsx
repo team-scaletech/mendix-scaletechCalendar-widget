@@ -4,16 +4,17 @@ interface ModalProps {
     isShowModal: boolean;
     hideModal: () => void;
     handleSubmit: () => void;
-    date: string;
+    startTime: string;
+    endTime: string;
 }
 
 const Modal: FC<ModalProps> = props => {
-    const { isShowModal, hideModal, handleSubmit } = props;
+    const { isShowModal, hideModal, handleSubmit, startTime, endTime } = props;
     const [eventData, setEventData] = useState({
         id: "",
         title: "",
-        start: new Date().toISOString().slice(0, 16),
-        end: new Date(new Date().getTime() + 60 * 60 * 1000).toISOString().slice(0, 16),
+        start: startTime || new Date().toISOString().slice(0, 16),
+        end: endTime || new Date(new Date().getTime() + 60 * 60 * 1000).toISOString().slice(0, 16),
         type: "work"
     });
     console.warn("sta", eventData.start);
