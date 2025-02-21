@@ -7,9 +7,12 @@ import listPlugin from "@event-calendar/list";
 import ResourceTimeline from "@event-calendar/resource-timeline";
 import ResourceTimeGrid from "@event-calendar/resource-time-grid";
 import Interaction from "@event-calendar/interaction";
-interface CalendarEvent {
+
+import EventModal from "./Modal/EventModal";
+import ResourcesModal from "./Modal/ResourcesModal";
+export interface CalendarEvent {
     id: string;
-    resourceIds: string[];
+    resourceIds: number[];
     allDay: boolean;
     start: Date;
     end: Date;
@@ -28,13 +31,35 @@ interface CalendarEvent {
     };
 }
 
+export interface ResourceProps {
+    id: number;
+    title: string;
+    children?: ResourceProps[];
+}
+
 const EventCalendar = () => {
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
+    const [resource, setResource] = useState<ResourceProps[]>([
+        {
+            id: 1,
+            title: "Resource A",
+            children: [
+                {
+                    id: 11,
+                    title: "Resource A1"
+                },
+                {
+                    id: 12,
+                    title: "Resource A2"
+                }
+            ]
+        }
+    ]);
     const [events] = useState<CalendarEvent[]>([
         {
             id: "1",
-            resourceIds: ["room1"],
+            resourceIds: [1],
             allDay: false,
             start: new Date(),
             end: new Date(new Date().getTime() + 60 * 60 * 1000),
@@ -51,7 +76,7 @@ const EventCalendar = () => {
         },
         {
             id: "2",
-            resourceIds: ["room2"],
+            resourceIds: [2],
             allDay: false,
             start: new Date(),
             end: new Date(new Date().getTime() + 90 * 60 * 1000),
@@ -85,14 +110,74 @@ const EventCalendar = () => {
         styles: [],
         extendedProps: { type: "work", description: "" }
     });
-    const [isShowModal, setIsShowModal] = useState(false);
-    console.warn("events", events);
+    const [isShowModal, setIsShowModal] = useState({
+        events: false,
+        resource: false
+    });
+
+    useEffect(() => {
+        if (calendarRef.current && !calendarInstance) {
+            const newCalendar = new Calendar({
+                target: calendarRef.current,
+                props: {
+                    plugins: [TimeGrid, DayGrid, listPlugin, ResourceTimeline, ResourceTimeGrid, Interaction], // Move plugins inside props
+                    options: {
+                        view: "dayGridMonth",
+                        customButtons: {
+                            myCustomButton: {
+                                text: "Resource",
+                                click: () => setIsShowModal({ ...isShowModal, resource: true })
+                            }
+                        },
+
+                        headerToolbar: {
+                            start: "prev,next today myCustomButton",
+                            center: "title",
+                            end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek,resourceTimeGridDay,resourceTimelineDay "
+                        },
+                        resources: resource,
+                        selectable: true,
+                        nowIndicator: true,
+                        editable: true,
+                        events: events,
+                        // navLinks: true,
+                        // selectMirror: true,
+                        // dayMaxEventRows: true,
+                        select: handleSelect,
+                        dateClick: handleDateClick,
+                        eventClick: handleEventClick
+                    }
+                }
+            });
+
+            setCalendarInstance(newCalendar);
+        }
+
+        return () => {
+            if (calendarInstance) {
+                calendarInstance.destroy();
+                setCalendarInstance(null);
+            }
+        };
+    }, [events]);
+    useEffect(() => {
+        if (calendarInstance) {
+            calendarInstance.setOption("resources", resource);
+        }
+    }, [resource]);
+
     const showModal = () => {
-        setIsShowModal(true);
+        setIsShowModal({
+            events: true,
+            resource: false
+        });
     };
 
     const hideModal = () => {
-        setIsShowModal(false);
+        setIsShowModal({
+            events: false,
+            resource: false
+        });
     };
     const formatDateToLocal = (date: Date) => {
         const year = date.getFullYear();
@@ -166,21 +251,15 @@ const EventCalendar = () => {
             extendedProps: { type: eventData.extendedProps.type, description: eventData.extendedProps.description }
         };
 
-        // let updatedEvents;
         if (eventData.id) {
-            // updatedEvents = events.map(event => (event.id === eventData.id ? updatedEvent : event));
             if (calendarInstance) {
                 calendarInstance.updateEvent(updatedEvent);
             }
         } else {
-            // updatedEvents = [...events, updatedEvent];
-
             if (calendarInstance) {
                 calendarInstance.addEvent(updatedEvent);
             }
         }
-
-        // setEvents(updatedEvents);s
 
         hideModal();
     };
@@ -208,106 +287,21 @@ const EventCalendar = () => {
         });
         showModal();
     };
-    const resources = [
-        { id: "room1", title: "Conference Room A" },
-        { id: "room2", title: "Conference Room B" },
-        { id: "room3", title: "Training Room" }
-    ];
-
-    useEffect(() => {
-        if (calendarRef.current && !calendarInstance) {
-            const newCalendar = new Calendar({
-                target: calendarRef.current,
-                props: {
-                    plugins: [TimeGrid, DayGrid, listPlugin, ResourceTimeline, ResourceTimeGrid, Interaction], // Move plugins inside props
-                    options: {
-                        view: "timeGridWeek",
-                        headerToolbar: {
-                            start: "prev,next today",
-                            center: "title",
-                            end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek,resourceTimeGridDay,resourceTimelineDay "
-                        },
-                        resources: resources,
-                        selectable: true,
-                        nowIndicator: true,
-                        editable: true,
-                        events: events,
-                        // navLinks: true,
-                        // selectMirror: true,
-                        // dayMaxEventRows: true,
-                        select: handleSelect,
-                        dateClick: handleDateClick,
-                        eventClick: handleEventClick
-                    }
-                }
-            });
-
-            setCalendarInstance(newCalendar);
-        }
-
-        return () => {
-            if (calendarInstance) {
-                calendarInstance.destroy();
-                setCalendarInstance(null);
-            }
-        };
-    }, [events]);
 
     return (
         <div className="container mx-auto p-5">
             <div ref={calendarRef}></div>
-            {isShowModal && (
-                <div className="modal-overlay">
-                    <div className="custom-modal">
-                        <div className="close-btn" onClick={hideModal}>
-                            <svg viewBox="0 0 30 30" width="20px" height="20px">
-                                <path d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z" />
-                            </svg>
-                        </div>
-                        <h2>{eventData.id ? "Edit Event" : "Add Event"}</h2>
-                        <div className="time-wrapper">
-                            <div>
-                                <label>Start Time:</label>
-                                <input
-                                    type="datetime-local"
-                                    value={eventData.start as any}
-                                    onChange={e => setEventData({ ...eventData, start: e.target.value as any })}
-                                />
-                            </div>
-                            <div>
-                                <label>End Time:</label>
-                                <input
-                                    type="datetime-local"
-                                    value={eventData.end as any}
-                                    onChange={e => setEventData({ ...eventData, end: e.target.value as any })}
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label>Title:</label>
-                            <input
-                                type="text"
-                                value={eventData.title}
-                                onChange={e => setEventData({ ...eventData, title: e.target.value })}
-                            />
-                            <label>Type:</label>
-                            <input
-                                type="text"
-                                value={eventData.extendedProps.type}
-                                onChange={e =>
-                                    setEventData({
-                                        ...eventData,
-                                        extendedProps: { type: e.target.value, description: "" }
-                                    })
-                                }
-                            />
-                        </div>
-                        <div className="modal-buttons">
-                            <button onClick={handleSubmit}>Save</button>
-                            <button onClick={hideModal}>Cancel</button>
-                        </div>
-                    </div>
-                </div>
+            {isShowModal.events && (
+                <EventModal
+                    hideModal={hideModal}
+                    handleSubmit={handleSubmit}
+                    eventData={eventData}
+                    setEventData={setEventData}
+                    resources={resource}
+                />
+            )}
+            {isShowModal.resource && (
+                <ResourcesModal hideModal={hideModal} resources={resource} setResources={setResource} />
             )}
         </div>
     );

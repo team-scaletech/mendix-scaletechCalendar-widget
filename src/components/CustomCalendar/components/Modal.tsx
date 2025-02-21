@@ -17,7 +17,6 @@ const Modal: FC<ModalProps> = props => {
         end: endTime || new Date(new Date().getTime() + 60 * 60 * 1000).toISOString().slice(0, 16),
         type: "work"
     });
-    console.warn("sta", eventData.start);
     return (
         <div>
             {isShowModal && (
