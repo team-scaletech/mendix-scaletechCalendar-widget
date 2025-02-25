@@ -1,4 +1,8 @@
-import { createElement, FC, useEffect, useState } from "react";
+import { createElement, FC, SetStateAction, useEffect, useState } from "react";
+import { Editor } from "react-draft-wysiwyg";
+import { EditorState, convertToRaw } from "draft-js";
+
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { CalendarEvent, ResourceProps } from "../EventCalendar";
 
 interface ModalProps {
@@ -14,7 +18,9 @@ const EventModal: FC<ModalProps> = props => {
 
     const [selectedParentId, setSelectedParentId] = useState<number | null>(null);
     const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
+    console.warn("editorState", editorState);
     // Auto-select Parent & Child if eventData.resourceIds is set
     useEffect(() => {
         if (eventData.resourceIds) {
@@ -36,6 +42,17 @@ const EventModal: FC<ModalProps> = props => {
 
     const selectedParent = resources.find(res => res.id === selectedParentId);
 
+    const onEditorStateChange = function (editorState: any) {
+        setEditorState(editorState);
+        const { blocks } = convertToRaw(editorState.getCurrentContent());
+        console.warn("block", blocks);
+        /*let text = blocks.reduce((acc, item) => {
+          acc = acc + item.text;
+          return acc;
+        }, "");*/
+        let text = editorState.getCurrentContent().getPlainText("\u0001");
+        console.warn("text", text);
+    };
     return (
         <div className="modal-overlay">
             <div className="custom-modal">
@@ -119,6 +136,15 @@ const EventModal: FC<ModalProps> = props => {
                                 extendedProps: { type: e.target.value, description: "" }
                             })
                         }
+                    />
+                </div>
+                <div>
+                    <Editor
+                        editorState={editorState}
+                        toolbarClassName="toolbarClassName"
+                        wrapperClassName="wrapperClassName"
+                        editorClassName="editorClassName"
+                        onEditorStateChange={onEditorStateChange}
                     />
                 </div>
                 <div className="modal-buttons">

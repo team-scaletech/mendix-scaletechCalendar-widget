@@ -10,6 +10,9 @@ import Interaction from "@event-calendar/interaction";
 
 import EventModal from "./Modal/EventModal";
 import ResourcesModal from "./Modal/ResourcesModal";
+
+import "@event-calendar/core/index.css";
+
 export interface CalendarEvent {
     id: string;
     resourceIds: number[];
@@ -60,7 +63,7 @@ const EventCalendar = () => {
         {
             id: "1",
             resourceIds: [1],
-            allDay: false,
+            allDay: true,
             start: new Date(),
             end: new Date(new Date().getTime() + 60 * 60 * 1000),
             title: "Team Meeting",
@@ -77,7 +80,7 @@ const EventCalendar = () => {
         {
             id: "2",
             resourceIds: [2],
-            allDay: false,
+            allDay: true,
             start: new Date(),
             end: new Date(new Date().getTime() + 90 * 60 * 1000),
             title: "Music Session",
@@ -133,19 +136,28 @@ const EventCalendar = () => {
                         headerToolbar: {
                             start: "prev,next today myCustomButton",
                             center: "title",
-                            end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek,resourceTimeGridDay,resourceTimelineDay "
+                            end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek,resourceTimeGridWeek,resourceTimelineDay "
                         },
                         resources: resource,
                         selectable: true,
                         nowIndicator: true,
                         editable: true,
                         events: events,
+                        allDaySlot: true,
                         // navLinks: true,
                         // selectMirror: true,
                         // dayMaxEventRows: true,
                         select: handleSelect,
                         dateClick: handleDateClick,
-                        eventClick: handleEventClick
+                        eventClick: handleEventClick,
+                        views: {
+                            timeGridWeek: { pointer: true },
+                            resourceTimeGridWeek: { pointer: true },
+                            resourceTimelineDay: {
+                                pointer: true,
+                                resources: resource
+                            }
+                        }
                     }
                 }
             });
@@ -233,6 +245,7 @@ const EventCalendar = () => {
     };
 
     const handleSubmit = () => {
+        console.warn("Submitting Event Data:", eventData);
         const updatedEvent = {
             id: eventData.id || String(events.length + 1),
             resourceIds: eventData.resourceIds,
