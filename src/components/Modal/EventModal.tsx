@@ -1,9 +1,8 @@
-import { createElement, FC, SetStateAction, useEffect, useState } from "react";
-import { Editor } from "react-draft-wysiwyg";
-import { EditorState, convertToRaw } from "draft-js";
+import { createElement, FC, useEffect, useState } from "react";
 
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { CalendarEvent, ResourceProps } from "../EventCalendar";
+import TextEditor from "./TextEditor";
+import { CloseIcon } from "src/icon/icon";
 
 interface ModalProps {
     hideModal: () => void;
@@ -18,9 +17,7 @@ const EventModal: FC<ModalProps> = props => {
 
     const [selectedParentId, setSelectedParentId] = useState<number | null>(null);
     const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
-    const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
-    console.warn("editorState", editorState);
     // Auto-select Parent & Child if eventData.resourceIds is set
     useEffect(() => {
         if (eventData.resourceIds) {
@@ -42,24 +39,11 @@ const EventModal: FC<ModalProps> = props => {
 
     const selectedParent = resources.find(res => res.id === selectedParentId);
 
-    const onEditorStateChange = function (editorState: any) {
-        setEditorState(editorState);
-        const { blocks } = convertToRaw(editorState.getCurrentContent());
-        console.warn("block", blocks);
-        /*let text = blocks.reduce((acc, item) => {
-          acc = acc + item.text;
-          return acc;
-        }, "");*/
-        let text = editorState.getCurrentContent().getPlainText("\u0001");
-        console.warn("text", text);
-    };
     return (
         <div className="modal-overlay">
             <div className="custom-modal">
                 <div className="close-btn" onClick={hideModal}>
-                    <svg viewBox="0 0 30 30" width="20px" height="20px">
-                        <path d="M 7 4 C 6.744125 4 6.4879687 4.0974687 6.2929688 4.2929688 L 4.2929688 6.2929688 C 3.9019687 6.6839688 3.9019687 7.3170313 4.2929688 7.7070312 L 11.585938 15 L 4.2929688 22.292969 C 3.9019687 22.683969 3.9019687 23.317031 4.2929688 23.707031 L 6.2929688 25.707031 C 6.6839688 26.098031 7.3170313 26.098031 7.7070312 25.707031 L 15 18.414062 L 22.292969 25.707031 C 22.682969 26.098031 23.317031 26.098031 23.707031 25.707031 L 25.707031 23.707031 C 26.098031 23.316031 26.098031 22.682969 25.707031 22.292969 L 18.414062 15 L 25.707031 7.7070312 C 26.098031 7.3170312 26.098031 6.6829688 25.707031 6.2929688 L 23.707031 4.2929688 C 23.316031 3.9019687 22.682969 3.9019687 22.292969 4.2929688 L 15 11.585938 L 7.7070312 4.2929688 C 7.5115312 4.0974687 7.255875 4 7 4 z" />
-                    </svg>
+                    <CloseIcon width="20px" height="20px" />
                 </div>
                 <h2>{eventData.id ? "Edit Event" : "Add Event"}</h2>
                 <div className="time-wrapper">
@@ -126,26 +110,9 @@ const EventModal: FC<ModalProps> = props => {
                         value={eventData.title}
                         onChange={e => setEventData({ ...eventData, title: e.target.value })}
                     />
-                    <label>Type:</label>
-                    <input
-                        type="text"
-                        value={eventData.extendedProps.type}
-                        onChange={e =>
-                            setEventData({
-                                ...eventData,
-                                extendedProps: { type: e.target.value, description: "" }
-                            })
-                        }
-                    />
                 </div>
                 <div>
-                    <Editor
-                        editorState={editorState}
-                        toolbarClassName="toolbarClassName"
-                        wrapperClassName="wrapperClassName"
-                        editorClassName="editorClassName"
-                        onEditorStateChange={onEditorStateChange}
-                    />
+                    <TextEditor eventData={eventData} setEventData={setEventData} />
                 </div>
                 <div className="modal-buttons">
                     <button onClick={handleSubmit}>Save</button>

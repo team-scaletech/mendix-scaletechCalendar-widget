@@ -10,6 +10,7 @@ import Interaction from "@event-calendar/interaction";
 
 import EventModal from "./Modal/EventModal";
 import ResourcesModal from "./Modal/ResourcesModal";
+import EventDetail from "./Modal/EventDetail";
 
 import "@event-calendar/core/index.css";
 
@@ -29,7 +30,6 @@ export interface CalendarEvent {
     classNames: string[];
     styles: string[]; // Use classNames instead of styles
     extendedProps: {
-        type: string;
         description: string;
     };
 }
@@ -63,7 +63,7 @@ const EventCalendar = () => {
         {
             id: "1",
             resourceIds: [1],
-            allDay: true,
+            allDay: false,
             start: new Date(),
             end: new Date(new Date().getTime() + 60 * 60 * 1000),
             title: "Team Meeting",
@@ -75,12 +75,12 @@ const EventCalendar = () => {
             textColor: "#ffffff",
             classNames: ["meeting-event"],
             styles: ["meeting-event"],
-            extendedProps: { type: "work", description: "Weekly team meeting" }
+            extendedProps: { description: "Weekly team meeting" }
         },
         {
             id: "2",
             resourceIds: [2],
-            allDay: true,
+            allDay: false,
             start: new Date(),
             end: new Date(new Date().getTime() + 90 * 60 * 1000),
             title: "Music Session",
@@ -92,7 +92,7 @@ const EventCalendar = () => {
             textColor: "#ffffff",
             classNames: ["music-event"],
             styles: ["meeting-event"],
-            extendedProps: { type: "music", description: "Piano practice session" }
+            extendedProps: { description: "Piano practice session" }
         }
     ]);
 
@@ -111,9 +111,10 @@ const EventCalendar = () => {
         textColor: "#ffffff",
         classNames: [],
         styles: [],
-        extendedProps: { type: "work", description: "" }
+        extendedProps: { description: "" }
     });
     const [isShowModal, setIsShowModal] = useState({
+        detail: false,
         events: false,
         resource: false
     });
@@ -150,6 +151,18 @@ const EventCalendar = () => {
                         select: handleSelect,
                         dateClick: handleDateClick,
                         eventClick: handleEventClick,
+                        // eventContent: (arg: any) => {
+                        //     return {
+                        //         html: `
+                        //             <div>
+                        //                 <strong>${arg.event.title}</strong>
+                        //                 <div style="font-size: 12px; color:white;">
+                        //                     ${arg.event.extendedProps?.description || ""}
+                        //                 </div>
+                        //             </div>
+                        //         `
+                        //     };
+                        // },
                         views: {
                             timeGridWeek: { pointer: true },
                             resourceTimeGridWeek: { pointer: true },
@@ -180,13 +193,15 @@ const EventCalendar = () => {
 
     const showModal = () => {
         setIsShowModal({
-            events: true,
+            detail: true,
+            events: false,
             resource: false
         });
     };
 
     const hideModal = () => {
         setIsShowModal({
+            detail: false,
             events: false,
             resource: false
         });
@@ -217,9 +232,9 @@ const EventCalendar = () => {
             textColor: "#ffffff",
             classNames: [],
             styles: [],
-            extendedProps: { type: "work", description: "" }
+            extendedProps: { description: "" }
         });
-        showModal();
+        setIsShowModal({ ...isShowModal, events: true });
     };
     const handleEventClick = (clickInfo: { event: any }) => {
         setEventData({
@@ -239,7 +254,7 @@ const EventCalendar = () => {
             textColor: clickInfo.event.textColor || "#ffffff",
             classNames: clickInfo.event.classNames || [],
             styles: [],
-            extendedProps: clickInfo.event.extendedProps || { type: "work", description: "" }
+            extendedProps: clickInfo.event.extendedProps || { description: "" }
         });
         showModal();
     };
@@ -261,7 +276,7 @@ const EventCalendar = () => {
             textColor: eventData.textColor,
             classNames: eventData.classNames,
             styles: [],
-            extendedProps: { type: eventData.extendedProps.type, description: eventData.extendedProps.description }
+            extendedProps: { description: eventData.extendedProps.description }
         };
 
         if (eventData.id) {
@@ -296,7 +311,7 @@ const EventCalendar = () => {
             textColor: "#ffffff",
             classNames: [],
             styles: [],
-            extendedProps: { type: "work", description: "" }
+            extendedProps: { description: "" }
         });
         showModal();
     };
@@ -304,6 +319,14 @@ const EventCalendar = () => {
     return (
         <div className="container mx-auto p-5">
             <div ref={calendarRef}></div>
+            {isShowModal.detail && (
+                <EventDetail
+                    hideModal={hideModal}
+                    EditModalShow={() => setIsShowModal({ detail: false, events: true, resource: false })}
+                    eventData={eventData}
+                    resources={resource}
+                />
+            )}
             {isShowModal.events && (
                 <EventModal
                     hideModal={hideModal}
