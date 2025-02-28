@@ -1,17 +1,94 @@
-<?xml version="1.0" encoding="utf-8"?>
-<widget id="scaletech.scaletechcalendar.ScaletechCalendar" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
-        supportedPlatform="Web"
-        xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+<?xml version="1.0" encoding="utf-8" ?>
+<widget
+    id="scaletech.scaletechcalendar.ScaletechCalendar"
+    pluginWidget="true"
+    needsEntityContext="true"
+    offlineCapable="true"
+    supportedPlatform="Web"
+    xmlns="http://www.mendix.com/widget/1.0/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd"
+>
     <name>Scaletech Calendar</name>
     <description>My widget description</description>
-    <icon/>
+    <icon />
     <properties>
         <propertyGroup caption="General">
-            <property key="sampleText" type="string" required="false">
-                <caption>Default value</caption>
-                <description>Sample text input</description>
-            </property>
+            <propertyGroup caption="Event Data">
+                <property key="eventData" type="datasource" isList="true" required="true">
+                    <caption>Event Data</caption>
+                    <description />
+                </property>
+                <property key="StartDate" type="attribute" dataSource="eventData" required="true">
+                    <caption>Start Date</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="DateTime" />
+                        <attributeType name="String" />
+                    </attributeTypes>
+                </property>
+                <property key="EndDate" type="attribute" dataSource="eventData" required="true">
+                    <caption>End Date</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="DateTime" />
+                        <attributeType name="String" />
+                    </attributeTypes>
+                </property>
+                <property key="TitleData" type="attribute" dataSource="eventData" required="true">
+                    <caption>Title</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="String" />
+                    </attributeTypes>
+                </property>
+                <property key="DescriptionData" type="attribute" dataSource="eventData" required="true">
+                    <caption>Description</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="String" />
+                    </attributeTypes>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Resource Data">
+                <property key="childrenData" type="datasource" isList="true" required="true">
+                    <caption>Children Data</caption>
+                    <description />
+                </property>
+
+                <property key="childrenTitle" type="attribute" dataSource="childrenData" required="true">
+                    <caption>Children Title</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="String" />
+                    </attributeTypes>
+                </property>
+
+                <property
+                    key="parentDataAssociation"
+                    type="association"
+                    selectableObjects="parentData"
+                    dataSource='childrenData'
+                >
+                    <caption>Parent Association</caption>
+                    <description />
+                    <associationTypes>
+                        <associationType name="Reference" />
+                        <associationType name="ReferenceSet" />
+                    </associationTypes>
+                </property>
+                <property key="parentData" type="datasource" isList="true" required="true">
+                    <caption>Resource Data</caption>
+                    <description />
+                </property>
+                <property key="parentTitle" type="attribute" dataSource="parentData" required="true">
+                    <caption>Parent Title</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="String" />
+                    </attributeTypes>
+                </property>
+            </propertyGroup>
         </propertyGroup>
     </properties>
 </widget>

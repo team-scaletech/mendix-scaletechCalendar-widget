@@ -4,13 +4,23 @@
  * @author Mendix Widgets Framework Team
  */
 import { CSSProperties } from "react";
+import { ListValue, ListAttributeValue, ListReferenceValue, ListReferenceSetValue } from "mendix";
 
 export interface ScaletechCalendarContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
     tabIndex?: number;
-    sampleText: string;
+    eventData: ListValue;
+    StartDate: ListAttributeValue<Date | string>;
+    EndDate: ListAttributeValue<Date | string>;
+    TitleData: ListAttributeValue<string>;
+    DescriptionData: ListAttributeValue<string>;
+    childrenData: ListValue;
+    childrenTitle: ListAttributeValue<string>;
+    parentDataAssociation: ListReferenceValue | ListReferenceSetValue;
+    parentData: ListValue;
+    parentTitle: ListAttributeValue<string>;
 }
 
 export interface ScaletechCalendarPreviewProps {
@@ -24,5 +34,14 @@ export interface ScaletechCalendarPreviewProps {
     readOnly: boolean;
     renderMode: "design" | "xray" | "structure";
     translate: (text: string) => string;
-    sampleText: string;
+    eventData: {} | { caption: string } | { type: string } | null;
+    StartDate: string;
+    EndDate: string;
+    TitleData: string;
+    DescriptionData: string;
+    childrenData: {} | { caption: string } | { type: string } | null;
+    childrenTitle: string;
+    parentDataAssociation: string;
+    parentData: {} | { caption: string } | { type: string } | null;
+    parentTitle: string;
 }

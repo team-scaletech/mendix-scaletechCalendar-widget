@@ -1,4 +1,4 @@
-import { createElement, useEffect, useRef, useState } from "react";
+import { createElement, FC, useEffect, useRef, useState } from "react";
 
 import Calendar from "@event-calendar/core";
 import TimeGrid from "@event-calendar/time-grid";
@@ -12,7 +12,14 @@ import EventModal from "./Modal/EventModal";
 import ResourcesModal from "./Modal/ResourcesModal";
 import EventDetail from "./Modal/EventDetail";
 
+import { EventVale, ResourceValue } from "src/ScaletechCalendar";
+
 import "@event-calendar/core/index.css";
+
+interface EventCalendarProps {
+    eventValue?: EventVale[];
+    resourceValue?: ResourceValue[];
+}
 
 export interface CalendarEvent {
     id: string;
@@ -40,61 +47,44 @@ export interface ResourceProps {
     children?: ResourceProps[];
 }
 
-const EventCalendar = () => {
+const EventCalendar: FC<EventCalendarProps> = props => {
+    const { eventValue, resourceValue } = props;
+    console.warn(">>", resourceValue);
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
-    const [resource, setResource] = useState<ResourceProps[]>([
-        {
-            id: 1,
-            title: "Resource A",
-            children: [
-                {
-                    id: 11,
-                    title: "Resource A1"
-                },
-                {
-                    id: 12,
-                    title: "Resource A2"
-                }
-            ]
-        }
-    ]);
-    const [events] = useState<CalendarEvent[]>([
-        {
-            id: "1",
-            resourceIds: [1],
-            allDay: false,
-            start: new Date(),
-            end: new Date(new Date().getTime() + 60 * 60 * 1000),
-            title: "Team Meeting",
-            editable: true,
-            startEditable: true,
-            durationEditable: true,
-            display: "auto",
-            backgroundColor: "#007bff",
-            textColor: "#ffffff",
-            classNames: ["meeting-event"],
-            styles: ["meeting-event"],
-            extendedProps: { description: "Weekly team meeting" }
-        },
-        {
-            id: "2",
-            resourceIds: [2],
-            allDay: false,
-            start: new Date(),
-            end: new Date(new Date().getTime() + 90 * 60 * 1000),
-            title: "Music Session",
-            editable: true,
-            startEditable: true,
-            durationEditable: true,
-            display: "auto",
-            backgroundColor: "#28a745",
-            textColor: "#ffffff",
-            classNames: ["music-event"],
-            styles: ["meeting-event"],
-            extendedProps: { description: "Piano practice session" }
-        }
-    ]);
+    const [resource, setResource] = useState<ResourceProps[]>(
+        resourceValue
+            ? resourceValue.map(r => ({
+                  id: Number(r.id), // Convert ID from string to number
+                  title: r.title,
+                  children: r.children?.map(child => ({
+                      id: Number(child.id), // Convert child ID from string to number
+                      title: child.title
+                  }))
+              }))
+            : []
+    );
+
+    const events: CalendarEvent[] =
+        eventValue?.map(
+            (event): CalendarEvent => ({
+                id: event.id,
+                resourceIds: [15481123719111905], // Modify if needed
+                allDay: false,
+                start: new Date(event.StartDate), // Ensure it's a Date object
+                end: new Date(event.EndDate), // Ensure it's a Date object
+                title: event.TitleData,
+                editable: true,
+                startEditable: true,
+                durationEditable: true,
+                display: "auto",
+                backgroundColor: "#007bff",
+                textColor: "#ffffff",
+                classNames: ["meeting-event"],
+                styles: ["meeting-event"],
+                extendedProps: { description: event.DescriptionData }
+            })
+        ) || [];
 
     const [eventData, setEventData] = useState<CalendarEvent>({
         id: "",
@@ -139,30 +129,16 @@ const EventCalendar = () => {
                             center: "title",
                             end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek,resourceTimeGridWeek,resourceTimelineDay "
                         },
-                        resources: resource,
+                        resources: resourceValue,
                         selectable: true,
                         nowIndicator: true,
                         editable: true,
                         events: events,
                         allDaySlot: true,
-                        // navLinks: true,
-                        // selectMirror: true,
-                        // dayMaxEventRows: true,
+
                         select: handleSelect,
                         dateClick: handleDateClick,
                         eventClick: handleEventClick,
-                        // eventContent: (arg: any) => {
-                        //     return {
-                        //         html: `
-                        //             <div>
-                        //                 <strong>${arg.event.title}</strong>
-                        //                 <div style="font-size: 12px; color:white;">
-                        //                     ${arg.event.extendedProps?.description || ""}
-                        //                 </div>
-                        //             </div>
-                        //         `
-                        //     };
-                        // },
                         views: {
                             timeGridWeek: { pointer: true },
                             resourceTimeGridWeek: { pointer: true },
@@ -260,7 +236,6 @@ const EventCalendar = () => {
     };
 
     const handleSubmit = () => {
-        console.warn("Submitting Event Data:", eventData);
         const updatedEvent = {
             id: eventData.id || String(events.length + 1),
             resourceIds: eventData.resourceIds,
@@ -313,7 +288,7 @@ const EventCalendar = () => {
             styles: [],
             extendedProps: { description: "" }
         });
-        showModal();
+        setIsShowModal({ ...isShowModal, events: true });
     };
 
     return (

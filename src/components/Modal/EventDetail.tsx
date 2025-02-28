@@ -43,7 +43,6 @@ const EventDetail: FC<EventDetailProps> = props => {
                     setSelectedParent(parentResource.title);
 
                     if (childrenResource) {
-                        console.warn(">>>", childrenResource);
                         setSelectedChild(childrenResource.title);
                     }
                 }
