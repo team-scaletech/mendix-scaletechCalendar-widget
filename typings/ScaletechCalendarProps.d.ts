@@ -4,7 +4,8 @@
  * @author Mendix Widgets Framework Team
  */
 import { CSSProperties } from "react";
-import { ListValue, ListAttributeValue, ListReferenceValue, ListReferenceSetValue } from "mendix";
+import { ActionValue, EditableValue, ListValue, ListAttributeValue, ListReferenceValue, ListReferenceSetValue } from "mendix";
+import { Big } from "big.js";
 
 export interface ScaletechCalendarContainerProps {
     name: string;
@@ -12,8 +13,9 @@ export interface ScaletechCalendarContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     eventData: ListValue;
-    StartDate: ListAttributeValue<Date | string>;
-    EndDate: ListAttributeValue<Date | string>;
+    eventId?: ListAttributeValue<Big>;
+    StartDate: ListAttributeValue<string>;
+    EndDate: ListAttributeValue<string>;
     TitleData: ListAttributeValue<string>;
     DescriptionData: ListAttributeValue<string>;
     childrenData: ListValue;
@@ -21,6 +23,12 @@ export interface ScaletechCalendarContainerProps {
     parentDataAssociation: ListReferenceValue | ListReferenceSetValue;
     parentData: ListValue;
     parentTitle: ListAttributeValue<string>;
+    createEventId?: EditableValue<Big>;
+    createStartDate?: EditableValue<string>;
+    createEndDate?: EditableValue<string>;
+    createTitleData?: EditableValue<string>;
+    createDescriptionData?: EditableValue<string>;
+    saveEventAction?: ActionValue;
 }
 
 export interface ScaletechCalendarPreviewProps {
@@ -35,6 +43,7 @@ export interface ScaletechCalendarPreviewProps {
     renderMode: "design" | "xray" | "structure";
     translate: (text: string) => string;
     eventData: {} | { caption: string } | { type: string } | null;
+    eventId: string;
     StartDate: string;
     EndDate: string;
     TitleData: string;
@@ -44,4 +53,10 @@ export interface ScaletechCalendarPreviewProps {
     parentDataAssociation: string;
     parentData: {} | { caption: string } | { type: string } | null;
     parentTitle: string;
+    createEventId: string;
+    createStartDate: string;
+    createEndDate: string;
+    createTitleData: string;
+    createDescriptionData: string;
+    saveEventAction: {} | null;
 }

@@ -13,12 +13,20 @@ import ResourcesModal from "./Modal/ResourcesModal";
 import EventDetail from "./Modal/EventDetail";
 
 import { EventVale, ResourceValue } from "src/ScaletechCalendar";
+import { ActionValue, EditableValue } from "mendix";
+import { Big } from "big.js";
 
 import "@event-calendar/core/index.css";
 
 interface EventCalendarProps {
     eventValue?: EventVale[];
     resourceValue?: ResourceValue[];
+    saveEventAction?: ActionValue;
+    createEventId?: EditableValue<Big>;
+    createStartDate?: EditableValue<string>;
+    createEndDate?: EditableValue<string>;
+    createTitleData?: EditableValue<string>;
+    createDescriptionData?: EditableValue<string>;
 }
 
 export interface CalendarEvent {
@@ -48,8 +56,17 @@ export interface ResourceProps {
 }
 
 const EventCalendar: FC<EventCalendarProps> = props => {
-    const { eventValue, resourceValue } = props;
-    console.warn(">>", resourceValue);
+    const {
+        eventValue,
+        resourceValue,
+        createDescriptionData,
+        createEndDate,
+        createStartDate,
+        createTitleData,
+        saveEventAction,
+        createEventId
+    } = props;
+
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
     const [resource, setResource] = useState<ResourceProps[]>(
@@ -86,7 +103,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
             })
         ) || [];
 
-    const [eventData, setEventData] = useState<CalendarEvent>({
+    const [eventObject, setEventObject] = useState<CalendarEvent>({
         id: "",
         resourceIds: [],
         allDay: false,
@@ -160,7 +177,19 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 setCalendarInstance(null);
             }
         };
-    }, [events]);
+    }, []);
+    useEffect(() => {
+        if (calendarInstance) {
+            const currentEvents = calendarInstance.getOption("events") || [];
+
+            const isSameEvents = currentEvents.length === events.length;
+            if (!isSameEvents) {
+                const mergedEvents = [...currentEvents, ...events.filter(e => !currentEvents.some(t => t.id === e.id))];
+                calendarInstance.setOption("events", mergedEvents);
+            }
+        }
+    }, [events, calendarInstance]);
+
     useEffect(() => {
         if (calendarInstance) {
             calendarInstance.setOption("resources", resource);
@@ -193,7 +222,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     };
 
     const handleDateClick = (arg: { date: Date }) => {
-        setEventData({
+        setEventObject({
             id: "",
             resourceIds: [],
             allDay: false,
@@ -213,7 +242,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         setIsShowModal({ ...isShowModal, events: true });
     };
     const handleEventClick = (clickInfo: { event: any }) => {
-        setEventData({
+        setEventObject({
             id: clickInfo.event.id,
             resourceIds: clickInfo.event.resourceIds || [],
             allDay: clickInfo.event.allDay || false,
@@ -236,32 +265,24 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     };
 
     const handleSubmit = () => {
-        const updatedEvent = {
-            id: eventData.id || String(events.length + 1),
-            resourceIds: eventData.resourceIds,
-            allDay: eventData.allDay,
-            start: new Date(eventData.start),
-            end: new Date(eventData.end),
-            title: eventData.title,
-            editable: eventData.editable,
-            startEditable: eventData.startEditable,
-            durationEditable: eventData.durationEditable,
-            display: eventData.display,
-            backgroundColor: eventData.backgroundColor,
-            textColor: eventData.textColor,
-            classNames: eventData.classNames,
-            styles: [],
-            extendedProps: { description: eventData.extendedProps.description }
-        };
+        if (!eventObject) return;
 
-        if (eventData.id) {
-            if (calendarInstance) {
-                calendarInstance.updateEvent(updatedEvent);
-            }
-        } else {
-            if (calendarInstance) {
-                calendarInstance.addEvent(updatedEvent);
-            }
+        const { id, start, end, title, extendedProps } = eventObject;
+
+        // Only assign if createEventId is NOT an AutoNumber field
+        if (createEventId) {
+            const numericId = id ? Number(id) : events.length; // Use fallback ID if necessary
+            console.warn("numericId", numericId);
+            createEventId.setValue(new Big(numericId));
+        }
+
+        createStartDate?.setValue(new Date(start).toISOString());
+        createEndDate?.setValue(new Date(end).toISOString());
+        createTitleData?.setValue(title);
+        createDescriptionData?.setValue(extendedProps?.description || "");
+
+        if (saveEventAction?.canExecute) {
+            saveEventAction.execute();
         }
 
         hideModal();
@@ -271,7 +292,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         const adjustedEnd = new Date(selectionInfo.end);
         adjustedEnd.setMinutes(adjustedEnd.getMinutes() - 1);
 
-        setEventData({
+        setEventObject({
             id: "",
             resourceIds: [],
             allDay: false,
@@ -290,6 +311,16 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         });
         setIsShowModal({ ...isShowModal, events: true });
     };
+    // const handleEdit = () => {
+    //     const { id } = eventObject;
+
+    //     if (createEventId) {
+    //         const numericId = id !== undefined ? Number(id) : eventValue?.length || 0; // Ensure a valid fallback
+    //         if (!isNaN(numericId)) {
+    //             createEventId.setValue(new Big(numericId)); // Convert only if valid
+    //         }
+    //     }
+    // };
 
     return (
         <div className="container mx-auto p-5">
@@ -298,7 +329,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 <EventDetail
                     hideModal={hideModal}
                     EditModalShow={() => setIsShowModal({ detail: false, events: true, resource: false })}
-                    eventData={eventData}
+                    eventObject={eventObject}
                     resources={resource}
                 />
             )}
@@ -306,8 +337,8 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 <EventModal
                     hideModal={hideModal}
                     handleSubmit={handleSubmit}
-                    eventData={eventData}
-                    setEventData={setEventData}
+                    eventObject={eventObject}
+                    setEventObject={setEventObject}
                     resources={resource}
                 />
             )}

@@ -7,21 +7,21 @@ import { CloseIcon } from "src/icon/icon";
 interface ModalProps {
     hideModal: () => void;
     handleSubmit: () => void;
-    eventData: CalendarEvent;
-    setEventData: React.Dispatch<React.SetStateAction<CalendarEvent>>;
+    eventObject: CalendarEvent;
+    setEventObject: React.Dispatch<React.SetStateAction<CalendarEvent>>;
     resources: ResourceProps[];
 }
 
 const EventModal: FC<ModalProps> = props => {
-    const { hideModal, handleSubmit, eventData, setEventData, resources } = props;
+    const { hideModal, handleSubmit, eventObject, setEventObject, resources } = props;
 
     const [selectedParentId, setSelectedParentId] = useState<number | null>(null);
     const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
 
     // Auto-select Parent & Child if eventData.resourceIds is set
     useEffect(() => {
-        if (eventData.resourceIds) {
-            const id = eventData.resourceIds[0];
+        if (eventObject.resourceIds) {
+            const id = eventObject.resourceIds[0];
             if (!id) return;
             const parent = resources.find(res => res.id === Number(id));
             if (parent) {
@@ -35,7 +35,7 @@ const EventModal: FC<ModalProps> = props => {
                 }
             }
         }
-    }, [eventData.resourceIds, resources]);
+    }, [eventObject.resourceIds, resources]);
 
     const selectedParent = resources.find(res => res.id === selectedParentId);
 
@@ -45,22 +45,22 @@ const EventModal: FC<ModalProps> = props => {
                 <div className="close-btn" onClick={hideModal}>
                     <CloseIcon width="20px" height="20px" />
                 </div>
-                <h2>{eventData.id ? "Edit Event" : "Add Event"}</h2>
+                <h2>{eventObject.id ? "Edit Event" : "Add Event"}</h2>
                 <div className="time-wrapper">
                     <div>
                         <label>Start Time:</label>
                         <input
                             type="datetime-local"
-                            value={eventData.start as any}
-                            onChange={e => setEventData({ ...eventData, start: e.target.value as any })}
+                            value={eventObject.start as any}
+                            onChange={e => setEventObject({ ...eventObject, start: e.target.value as any })}
                         />
                     </div>
                     <div>
                         <label>End Time:</label>
                         <input
                             type="datetime-local"
-                            value={eventData.end as any}
-                            onChange={e => setEventData({ ...eventData, end: e.target.value as any })}
+                            value={eventObject.end as any}
+                            onChange={e => setEventObject({ ...eventObject, end: e.target.value as any })}
                         />
                     </div>
                     <div>
@@ -71,7 +71,7 @@ const EventModal: FC<ModalProps> = props => {
                                 const parentId = parseInt(e.target.value);
                                 setSelectedParentId(parentId);
                                 setSelectedChildId(null);
-                                setEventData({ ...eventData, resourceIds: [parentId] });
+                                setEventObject({ ...eventObject, resourceIds: [parentId] });
                             }}
                         >
                             <option value="">Select Parent Resource</option>
@@ -90,7 +90,7 @@ const EventModal: FC<ModalProps> = props => {
                                 onChange={e => {
                                     const childId = parseInt(e.target.value);
                                     setSelectedChildId(childId);
-                                    setEventData({ ...eventData, resourceIds: [childId] });
+                                    setEventObject({ ...eventObject, resourceIds: [childId] });
                                 }}
                             >
                                 <option value="">Select Child Resource</option>
@@ -107,12 +107,12 @@ const EventModal: FC<ModalProps> = props => {
                     <label>Title:</label>
                     <input
                         type="text"
-                        value={eventData.title}
-                        onChange={e => setEventData({ ...eventData, title: e.target.value })}
+                        value={eventObject.title}
+                        onChange={e => setEventObject({ ...eventObject, title: e.target.value })}
                     />
                 </div>
                 <div>
-                    <TextEditor eventData={eventData} setEventData={setEventData} />
+                    <TextEditor eventObject={eventObject} setEventObject={setEventObject} />
                 </div>
                 <div className="modal-buttons">
                     <button onClick={handleSubmit}>Save</button>

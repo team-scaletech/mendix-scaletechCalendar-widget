@@ -21,6 +21,7 @@ export interface ResourceValue {
 export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): ReactElement => {
     const {
         eventData,
+        eventId,
         StartDate,
         EndDate,
         TitleData,
@@ -29,24 +30,27 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         childrenTitle,
         parentDataAssociation,
         parentData,
-        parentTitle
+        parentTitle,
+        saveEventAction,
+        createEventId,
+        createStartDate,
+        createEndDate,
+        createTitleData,
+        createDescriptionData
     } = props;
     const [eventValue, setEventValue] = useState<EventVale[]>([]);
     const [resourceValue, setResourceValue] = useState<ResourceValue[]>([]);
-    console.warn(">>>>", resourceValue);
 
     useEffect(() => {
         if (eventData && eventData.items) {
-            eventData.items.forEach((item: any) => {
-                const event = {
-                    id: item.id,
-                    StartDate: StartDate.get(item).displayValue,
-                    EndDate: EndDate.get(item).displayValue,
-                    TitleData: TitleData.get(item).displayValue,
-                    DescriptionData: DescriptionData.get(item).displayValue
-                };
-                setEventValue(prevEventValue => [...prevEventValue, event] as any);
-            });
+            const formattedEvents = eventData.items.map((item: any) => ({
+                id: eventId?.get(item).value?.toString(),
+                StartDate: StartDate.get(item).value,
+                EndDate: EndDate.get(item).value,
+                TitleData: TitleData.get(item).value,
+                DescriptionData: DescriptionData.get(item).value
+            }));
+            setEventValue(formattedEvents as any);
         }
     }, [eventData]);
 
@@ -95,5 +99,16 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         }
     }, [parentData, childrenData]);
 
-    return <EventCalendar eventValue={eventValue} resourceValue={resourceValue} />;
+    return (
+        <EventCalendar
+            eventValue={eventValue}
+            resourceValue={resourceValue}
+            saveEventAction={saveEventAction}
+            createEventId={createEventId}
+            createStartDate={createStartDate}
+            createEndDate={createEndDate}
+            createTitleData={createTitleData}
+            createDescriptionData={createDescriptionData}
+        />
+    );
 };

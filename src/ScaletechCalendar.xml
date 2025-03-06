@@ -19,30 +19,36 @@
                     <caption>Event Data</caption>
                     <description />
                 </property>
-                <property key="StartDate" type="attribute" dataSource="eventData" required="true">
+                <property key="eventId" type="attribute" dataSource='eventData' required="false">
+                    <caption>Event Id</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Integer" />
+                        <attributeType name="Decimal" />
+                    </attributeTypes>
+                </property>
+                <property key="StartDate" type="attribute" dataSource='eventData' required="true">
                     <caption>Start Date</caption>
                     <description />
                     <attributeTypes>
-                        <attributeType name="DateTime" />
                         <attributeType name="String" />
                     </attributeTypes>
                 </property>
-                <property key="EndDate" type="attribute" dataSource="eventData" required="true">
+                <property key="EndDate" type="attribute" dataSource='eventData' required="true">
                     <caption>End Date</caption>
                     <description />
                     <attributeTypes>
-                        <attributeType name="DateTime" />
                         <attributeType name="String" />
                     </attributeTypes>
                 </property>
-                <property key="TitleData" type="attribute" dataSource="eventData" required="true">
+                <property key="TitleData" type="attribute" dataSource='eventData' required="true">
                     <caption>Title</caption>
                     <description />
                     <attributeTypes>
                         <attributeType name="String" />
                     </attributeTypes>
                 </property>
-                <property key="DescriptionData" type="attribute" dataSource="eventData" required="true">
+                <property key="DescriptionData" type="attribute" dataSource='eventData' required="true">
                     <caption>Description</caption>
                     <description />
                     <attributeTypes>
@@ -89,6 +95,51 @@
                     </attributeTypes>
                 </property>
             </propertyGroup>
+        </propertyGroup>
+        <propertyGroup caption='Create Event'>
+            <property key="createEventId" type="attribute" required="false">
+                <caption>Event Id</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="Integer" />
+                    <attributeType name="Decimal" />
+                </attributeTypes>
+            </property>
+
+            <property key="createStartDate" type="attribute" required="false">
+                <caption>Start Date</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
+            </property>
+            <property key="createEndDate" type="attribute" required="false">
+                <caption>End Date</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
+            </property>
+            <property key="createTitleData" type="attribute" required="false">
+                <caption>Title</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
+            </property>
+            <property key="createDescriptionData" type="attribute" required="false">
+                <caption>Description</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption='Event'>
+            <property key="saveEventAction" type="action" required="false">
+                <caption>Save Event Action</caption>
+                <description />
+            </property>
         </propertyGroup>
     </properties>
 </widget>

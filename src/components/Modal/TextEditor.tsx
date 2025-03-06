@@ -4,17 +4,17 @@ import "react-quill/dist/quill.snow.css";
 import { CalendarEvent } from "../EventCalendar";
 
 interface TextEditorProps {
-    eventData: CalendarEvent;
-    setEventData?: React.Dispatch<React.SetStateAction<CalendarEvent>>;
+    eventObject: CalendarEvent;
+    setEventObject?: React.Dispatch<React.SetStateAction<CalendarEvent>>;
     readOnly?: boolean;
 }
 
-const TextEditor: FC<TextEditorProps> = ({ eventData, setEventData, readOnly = false }) => {
+const TextEditor: FC<TextEditorProps> = ({ eventObject, setEventObject, readOnly = false }) => {
     const quillRef = useRef(null);
     const handleChange = (e: string) => {
-        if (setEventData) {
-            setEventData({
-                ...eventData,
+        if (setEventObject) {
+            setEventObject({
+                ...eventObject,
                 extendedProps: { description: e }
             });
         }
@@ -43,7 +43,7 @@ const TextEditor: FC<TextEditorProps> = ({ eventData, setEventData, readOnly = f
                 ref={quillRef}
                 theme="snow"
                 modules={modules}
-                value={eventData.extendedProps.description}
+                value={eventObject.extendedProps.description}
                 onChange={handleChange}
                 readOnly={readOnly}
             />
