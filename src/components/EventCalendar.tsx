@@ -27,6 +27,7 @@ interface EventCalendarProps {
     createEndDate?: EditableValue<string>;
     createTitleData?: EditableValue<string>;
     createDescriptionData?: EditableValue<string>;
+    widgetActions?: EditableValue<string>;
 }
 
 export interface CalendarEvent {
@@ -59,12 +60,13 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     const {
         eventValue,
         resourceValue,
-        createDescriptionData,
-        createEndDate,
-        createStartDate,
-        createTitleData,
+        // createDescriptionData,
+        // createEndDate,
+        // createStartDate,
+        // createTitleData,
         saveEventAction,
-        createEventId
+        // createEventId,
+        widgetActions
     } = props;
 
     const calendarRef = useRef<HTMLDivElement>(null);
@@ -188,7 +190,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 calendarInstance.setOption("events", mergedEvents);
             }
         }
-    }, [events, calendarInstance]);
+    }, [events]);
 
     useEffect(() => {
         if (calendarInstance) {
@@ -266,22 +268,35 @@ const EventCalendar: FC<EventCalendarProps> = props => {
 
     const handleSubmit = () => {
         if (!eventObject) return;
-
         const { id, start, end, title, extendedProps } = eventObject;
+        const generateLongId = () => {
+            return `${Date.now()}${Math.floor(Math.random() * 1e9)}`;
+        };
 
-        // Only assign if createEventId is NOT an AutoNumber field
-        if (createEventId) {
-            const numericId = id ? Number(id) : events.length; // Use fallback ID if necessary
-            console.warn("numericId", numericId);
-            createEventId.setValue(new Big(numericId));
+        const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
+        if (id) {
+            const editJSON = {
+                Action: "edit",
+                EventId: numericId,
+                StartDate: new Date(start).toISOString(),
+                EndDate: new Date(end).toISOString(),
+                title: title,
+                Description: extendedProps?.description
+            };
+            widgetActions?.setValue(JSON.stringify(editJSON));
+        } else {
+            const createJSON = {
+                Action: "add",
+                EventId: numericId,
+                StartDate: new Date(start).toISOString(),
+                EndDate: new Date(end).toISOString(),
+                Title: title,
+                Description: extendedProps?.description
+            };
+            widgetActions?.setValue(JSON.stringify(createJSON));
         }
 
-        createStartDate?.setValue(new Date(start).toISOString());
-        createEndDate?.setValue(new Date(end).toISOString());
-        createTitleData?.setValue(title);
-        createDescriptionData?.setValue(extendedProps?.description || "");
-
-        if (saveEventAction?.canExecute) {
+        if (saveEventAction && saveEventAction.canExecute) {
             saveEventAction.execute();
         }
 

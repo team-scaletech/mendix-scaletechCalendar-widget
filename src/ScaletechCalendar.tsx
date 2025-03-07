@@ -32,6 +32,7 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         parentData,
         parentTitle,
         saveEventAction,
+        widgetActions,
         createEventId,
         createStartDate,
         createEndDate,
@@ -109,6 +110,7 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             createEndDate={createEndDate}
             createTitleData={createTitleData}
             createDescriptionData={createDescriptionData}
+            widgetActions={widgetActions}
         />
     );
 };

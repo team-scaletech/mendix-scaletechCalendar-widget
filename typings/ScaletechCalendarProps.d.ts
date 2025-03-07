@@ -13,7 +13,7 @@ export interface ScaletechCalendarContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     eventData: ListValue;
-    eventId?: ListAttributeValue<Big>;
+    eventId?: ListAttributeValue<string>;
     StartDate: ListAttributeValue<string>;
     EndDate: ListAttributeValue<string>;
     TitleData: ListAttributeValue<string>;
@@ -29,6 +29,7 @@ export interface ScaletechCalendarContainerProps {
     createTitleData?: EditableValue<string>;
     createDescriptionData?: EditableValue<string>;
     saveEventAction?: ActionValue;
+    widgetActions: EditableValue<string>;
 }
 
 export interface ScaletechCalendarPreviewProps {
@@ -59,4 +60,5 @@ export interface ScaletechCalendarPreviewProps {
     createTitleData: string;
     createDescriptionData: string;
     saveEventAction: {} | null;
+    widgetActions: string;
 }

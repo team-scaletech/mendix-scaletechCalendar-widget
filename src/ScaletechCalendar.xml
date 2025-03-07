@@ -23,8 +23,7 @@
                     <caption>Event Id</caption>
                     <description />
                     <attributeTypes>
-                        <attributeType name="Integer" />
-                        <attributeType name="Decimal" />
+                        <attributeType name="String" />
                     </attributeTypes>
                 </property>
                 <property key="StartDate" type="attribute" dataSource='eventData' required="true">
@@ -102,7 +101,6 @@
                 <description />
                 <attributeTypes>
                     <attributeType name="Integer" />
-                    <attributeType name="Decimal" />
                 </attributeTypes>
             </property>
 
@@ -136,9 +134,16 @@
             </property>
         </propertyGroup>
         <propertyGroup caption='Event'>
-            <property key="saveEventAction" type="action" required="false">
+            <property key="saveEventAction" type="action" required="true">
                 <caption>Save Event Action</caption>
                 <description />
+            </property>
+            <property key="widgetActions" type="attribute" required="true">
+                <caption>Event Change Helper</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
             </property>
         </propertyGroup>
     </properties>
