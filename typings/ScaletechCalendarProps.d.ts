@@ -4,13 +4,32 @@
  * @author Mendix Widgets Framework Team
  */
 import { CSSProperties } from "react";
+import { ActionValue, EditableValue, ListValue, ListAttributeValue, ListReferenceValue, ListReferenceSetValue } from "mendix";
+import { Big } from "big.js";
 
 export interface ScaletechCalendarContainerProps {
     name: string;
     class: string;
     style?: CSSProperties;
     tabIndex?: number;
-    sampleText: string;
+    eventData: ListValue;
+    eventId?: ListAttributeValue<string>;
+    StartDate: ListAttributeValue<string>;
+    EndDate: ListAttributeValue<string>;
+    TitleData: ListAttributeValue<string>;
+    DescriptionData: ListAttributeValue<string>;
+    childrenData: ListValue;
+    childrenTitle: ListAttributeValue<string>;
+    parentDataAssociation: ListReferenceValue | ListReferenceSetValue;
+    parentData: ListValue;
+    parentTitle: ListAttributeValue<string>;
+    createEventId?: EditableValue<Big>;
+    createStartDate?: EditableValue<string>;
+    createEndDate?: EditableValue<string>;
+    createTitleData?: EditableValue<string>;
+    createDescriptionData?: EditableValue<string>;
+    saveEventAction?: ActionValue;
+    widgetActions: EditableValue<string>;
 }
 
 export interface ScaletechCalendarPreviewProps {
@@ -24,5 +43,22 @@ export interface ScaletechCalendarPreviewProps {
     readOnly: boolean;
     renderMode: "design" | "xray" | "structure";
     translate: (text: string) => string;
-    sampleText: string;
+    eventData: {} | { caption: string } | { type: string } | null;
+    eventId: string;
+    StartDate: string;
+    EndDate: string;
+    TitleData: string;
+    DescriptionData: string;
+    childrenData: {} | { caption: string } | { type: string } | null;
+    childrenTitle: string;
+    parentDataAssociation: string;
+    parentData: {} | { caption: string } | { type: string } | null;
+    parentTitle: string;
+    createEventId: string;
+    createStartDate: string;
+    createEndDate: string;
+    createTitleData: string;
+    createDescriptionData: string;
+    saveEventAction: {} | null;
+    widgetActions: string;
 }

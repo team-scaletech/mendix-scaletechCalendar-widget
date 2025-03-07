@@ -8,7 +8,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    z-index: 1200;
     .custom-modal {
         position: relative;
         background: white;
@@ -19,7 +19,8 @@
         h2 {
             margin-bottom: 10px;
         }
-        input {
+        input,
+        select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -37,6 +38,50 @@
             top: 14px;
             cursor: pointer;
         }
+        .modal-header-btn {
+            position: absolute;
+            right: 14px;
+            top: 14px;
+            display: grid;
+            grid-template-columns: auto auto auto;
+            gap: 15px;
+            .modal-btn {
+                cursor: pointer;
+            }
+        }
+
+        .event-title-wrapper {
+            margin-bottom: 18px;
+            .event-title {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                h2 {
+                    margin-bottom: 5px;
+                    font-size: 24px;
+                }
+                h6 {
+                    font-size: 14px;
+                }
+            }
+        }
+        .event-schedule-wrapper {
+            display: grid;
+            grid-template-columns: auto auto;
+            row-gap: 25px;
+            margin-bottom: 18px;
+            .event-schedule {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                p {
+                    margin: 0px;
+                    font-size: 14px;
+                    font-weight: 900;
+                }
+            }
+        }
+
         .modal-buttons {
             display: flex;
             justify-content: end;
@@ -60,4 +105,68 @@
             }
         }
     }
+    .text-editor {
+        .ql-container {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    }
+}
+
+.ec-event-body {
+    img {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+.ec {
+    height: 640px;
+}
+.ec.ec-day-grid {
+    height: 400px;
+}
+@media (min-width: 576px) {
+    .ec {
+        height: 700px;
+    }
+    .ec.ec-day-grid {
+        height: 500px;
+    }
+}
+@media (min-width: 992px) {
+    .ec {
+        height: 800px;
+    }
+    .ec.ec-day-grid {
+        height: 700px;
+    }
+}
+@media (min-width: 1200px) {
+    .ec.ec-day-grid {
+        height: 800px;
+    }
+}
+
+/* Dark theme */
+body.ec-dark {
+    background: #22272e;
+    color: #adbac7;
+}
+body:not(.ec-dark) svg.dark {
+    display: none;
+}
+body.ec-dark svg.light {
+    display: none;
+}
+.toggle-dark-button {
+    color: inherit;
+    border: 0;
+    background: 0 0;
+    opacity: 0.8;
+    cursor: pointer;
+}
+.toggle-dark-button svg {
+    width: 1.25rem;
+    height: 1.25rem;
 }
