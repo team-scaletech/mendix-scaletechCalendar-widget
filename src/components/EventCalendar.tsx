@@ -1,4 +1,4 @@
-import { createElement, FC, useEffect, useRef, useState } from "react";
+import { createElement, FC, useEffect, useMemo, useRef, useState } from "react";
 
 import Calendar from "@event-calendar/core";
 import TimeGrid from "@event-calendar/time-grid";
@@ -84,14 +84,14 @@ const EventCalendar: FC<EventCalendarProps> = props => {
             : []
     );
 
-    const events: CalendarEvent[] =
-        eventValue?.map(
-            (event): CalendarEvent => ({
+    const events: CalendarEvent[] = useMemo(
+        () =>
+            eventValue?.map(event => ({
                 id: event.id,
-                resourceIds: [15481123719111905], // Modify if needed
+                resourceIds: [15481123719111905],
                 allDay: false,
-                start: new Date(event.StartDate), // Ensure it's a Date object
-                end: new Date(event.EndDate), // Ensure it's a Date object
+                start: new Date(event.StartDate),
+                end: new Date(event.EndDate),
                 title: event.TitleData,
                 editable: true,
                 startEditable: true,
@@ -102,8 +102,9 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 classNames: ["meeting-event"],
                 styles: ["meeting-event"],
                 extendedProps: { description: event.DescriptionData }
-            })
-        ) || [];
+            })) || [],
+        [eventValue]
+    );
 
     const [eventObject, setEventObject] = useState<CalendarEvent>({
         id: "",
@@ -184,11 +185,16 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         if (calendarInstance) {
             const currentEvents = calendarInstance.getOption("events") || [];
 
-            const isSameEvents = currentEvents.length === events.length;
-            if (!isSameEvents) {
-                const mergedEvents = [...currentEvents, ...events.filter(e => !currentEvents.some(t => t.id === e.id))];
-                calendarInstance.setOption("events", mergedEvents);
-            }
+            const mergedEvents = events.map(newEvent => {
+                const existingEvent = currentEvents.find(e => e.id === newEvent.id);
+
+                if (existingEvent) {
+                    return { ...existingEvent, ...newEvent };
+                } else {
+                    return newEvent;
+                }
+            });
+            calendarInstance.setOption("events", mergedEvents);
         }
     }, [events]);
 
@@ -280,7 +286,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 EventId: numericId,
                 StartDate: new Date(start).toISOString(),
                 EndDate: new Date(end).toISOString(),
-                title: title,
+                Title: title,
                 Description: extendedProps?.description
             };
             widgetActions?.setValue(JSON.stringify(editJSON));
