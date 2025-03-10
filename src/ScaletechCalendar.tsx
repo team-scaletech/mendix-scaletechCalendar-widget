@@ -7,11 +7,12 @@ import EventCalendar from "./components/EventCalendar";
 import "./ui/ScaletechCalendar.css";
 export interface EventVale {
     id: string;
-    StartDate: string;
-    EndDate: string;
-    TitleData: string;
-    DescriptionData: string;
-    parentResource: string;
+    startDate: string;
+    endDate: string;
+    titleData: string;
+    descriptionData: string;
+    parentTitle: string;
+    childrenTitle: string;
 }
 export interface ResourceValue {
     id: string;
@@ -22,17 +23,18 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
     const {
         eventData,
         eventId,
-        StartDate,
-        EndDate,
-        TitleData,
-        DescriptionData,
+        startDate,
+        endDate,
+        titleData,
+        descriptionData,
+        parentResource,
+        childrenResource,
         childrenData,
         childrenTitle,
         parentDataAssociation,
         parentData,
         parentTitle,
         saveEventAction,
-        widgetActions,
         createEventId,
         createStartDate,
         createEndDate,
@@ -46,14 +48,17 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         if (eventData && eventData.items) {
             const formattedEvents = eventData.items.map((item: any) => ({
                 id: eventId?.get(item).value?.toString(),
-                StartDate: StartDate.get(item).value,
-                EndDate: EndDate.get(item).value,
-                TitleData: TitleData.get(item).value,
-                DescriptionData: DescriptionData.get(item).value
+                startDate: startDate.get(item).value,
+                endDate: endDate.get(item).value,
+                titleData: titleData.get(item).value,
+                descriptionData: descriptionData.get(item).value,
+                parentTitle: parentResource.get(item).value,
+                childrenTitle: childrenResource.get(item).value
             }));
             setEventValue(formattedEvents as any);
         }
     }, [eventData]);
+    console.warn(eventValue);
 
     useEffect(() => {
         if (parentData?.items && childrenData?.items) {
@@ -110,7 +115,6 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             createEndDate={createEndDate}
             createTitleData={createTitleData}
             createDescriptionData={createDescriptionData}
-            widgetActions={widgetActions}
         />
     );
 };

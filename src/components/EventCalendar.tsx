@@ -27,7 +27,6 @@ interface EventCalendarProps {
     createEndDate?: EditableValue<string>;
     createTitleData?: EditableValue<string>;
     createDescriptionData?: EditableValue<string>;
-    widgetActions?: EditableValue<string>;
 }
 
 export interface CalendarEvent {
@@ -60,39 +59,26 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     const {
         eventValue,
         resourceValue,
-        // createDescriptionData,
-        // createEndDate,
-        // createStartDate,
-        // createTitleData,
-        saveEventAction,
-        // createEventId,
-        widgetActions
+        createEventId,
+        createStartDate,
+        createEndDate,
+        createDescriptionData,
+        createTitleData,
+        saveEventAction
     } = props;
 
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
-    const [resource, setResource] = useState<ResourceProps[]>(
-        resourceValue
-            ? resourceValue.map(r => ({
-                  id: Number(r.id), // Convert ID from string to number
-                  title: r.title,
-                  children: r.children?.map(child => ({
-                      id: Number(child.id), // Convert child ID from string to number
-                      title: child.title
-                  }))
-              }))
-            : []
-    );
-
+    const [resource, setResource] = useState<ResourceProps[]>([]);
     const events: CalendarEvent[] = useMemo(
         () =>
             eventValue?.map(event => ({
                 id: event.id,
                 resourceIds: [15481123719111905],
                 allDay: false,
-                start: new Date(event.StartDate),
-                end: new Date(event.EndDate),
-                title: event.TitleData,
+                start: new Date(event.startDate),
+                end: new Date(event.endDate),
+                title: event.titleData,
                 editable: true,
                 startEditable: true,
                 durationEditable: true,
@@ -101,7 +87,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 textColor: "#ffffff",
                 classNames: ["meeting-event"],
                 styles: ["meeting-event"],
-                extendedProps: { description: event.DescriptionData }
+                extendedProps: { description: event.descriptionData }
             })) || [],
         [eventValue]
     );
@@ -128,7 +114,20 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         events: false,
         resource: false
     });
-
+    useEffect(() => {
+        if (resourceValue) {
+            setResource(
+                resourceValue.map(r => ({
+                    id: Number(r.id), // Convert ID from string to number
+                    title: r.title,
+                    children: r.children?.map(child => ({
+                        id: Number(child.id), // Convert child ID from string to number
+                        title: child.title
+                    }))
+                }))
+            );
+        }
+    }, [resourceValue]);
     useEffect(() => {
         if (calendarRef.current && !calendarInstance) {
             const newCalendar = new Calendar({
@@ -276,31 +275,19 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         if (!eventObject) return;
         const { id, start, end, title, extendedProps } = eventObject;
         const generateLongId = () => {
-            return `${Date.now()}${Math.floor(Math.random() * 1e9)}`;
+            const timestamp = Date.now(); // 13 digits
+            const randomPart = Math.floor(Math.random() * 1e5); // 5 digits to keep it safe
+            return Number(`${timestamp}${randomPart}`);
         };
 
         const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
-        if (id) {
-            const editJSON = {
-                Action: "edit",
-                EventId: numericId,
-                StartDate: new Date(start).toISOString(),
-                EndDate: new Date(end).toISOString(),
-                Title: title,
-                Description: extendedProps?.description
-            };
-            widgetActions?.setValue(JSON.stringify(editJSON));
-        } else {
-            const createJSON = {
-                Action: "add",
-                EventId: numericId,
-                StartDate: new Date(start).toISOString(),
-                EndDate: new Date(end).toISOString(),
-                Title: title,
-                Description: extendedProps?.description
-            };
-            widgetActions?.setValue(JSON.stringify(createJSON));
-        }
+
+        const newValue = new Big(numericId);
+        createEventId?.setValue(newValue);
+        createStartDate?.setValue(start.toString());
+        createEndDate?.setValue(end.toString());
+        createTitleData?.setValue(title);
+        createDescriptionData?.setValue(extendedProps.description);
 
         if (saveEventAction && saveEventAction.canExecute) {
             saveEventAction.execute();

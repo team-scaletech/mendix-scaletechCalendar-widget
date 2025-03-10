@@ -13,11 +13,13 @@ export interface ScaletechCalendarContainerProps {
     style?: CSSProperties;
     tabIndex?: number;
     eventData: ListValue;
-    eventId?: ListAttributeValue<string>;
-    StartDate: ListAttributeValue<string>;
-    EndDate: ListAttributeValue<string>;
-    TitleData: ListAttributeValue<string>;
-    DescriptionData: ListAttributeValue<string>;
+    eventId?: ListAttributeValue<Big>;
+    startDate: ListAttributeValue<string>;
+    endDate: ListAttributeValue<string>;
+    titleData: ListAttributeValue<string>;
+    descriptionData: ListAttributeValue<string>;
+    parentResource: ListAttributeValue<string>;
+    childrenResource: ListAttributeValue<string>;
     childrenData: ListValue;
     childrenTitle: ListAttributeValue<string>;
     parentDataAssociation: ListReferenceValue | ListReferenceSetValue;
@@ -29,7 +31,6 @@ export interface ScaletechCalendarContainerProps {
     createTitleData?: EditableValue<string>;
     createDescriptionData?: EditableValue<string>;
     saveEventAction?: ActionValue;
-    widgetActions: EditableValue<string>;
 }
 
 export interface ScaletechCalendarPreviewProps {
@@ -45,10 +46,12 @@ export interface ScaletechCalendarPreviewProps {
     translate: (text: string) => string;
     eventData: {} | { caption: string } | { type: string } | null;
     eventId: string;
-    StartDate: string;
-    EndDate: string;
-    TitleData: string;
-    DescriptionData: string;
+    startDate: string;
+    endDate: string;
+    titleData: string;
+    descriptionData: string;
+    parentResource: string;
+    childrenResource: string;
     childrenData: {} | { caption: string } | { type: string } | null;
     childrenTitle: string;
     parentDataAssociation: string;
@@ -60,5 +63,4 @@ export interface ScaletechCalendarPreviewProps {
     createTitleData: string;
     createDescriptionData: string;
     saveEventAction: {} | null;
-    widgetActions: string;
 }

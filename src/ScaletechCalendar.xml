@@ -23,32 +23,46 @@
                     <caption>Event Id</caption>
                     <description />
                     <attributeTypes>
-                        <attributeType name="String" />
+                        <attributeType name="Long" />
                     </attributeTypes>
                 </property>
-                <property key="StartDate" type="attribute" dataSource='eventData' required="true">
+                <property key="startDate" type="attribute" dataSource='eventData' required="true">
                     <caption>Start Date</caption>
                     <description />
                     <attributeTypes>
                         <attributeType name="String" />
                     </attributeTypes>
                 </property>
-                <property key="EndDate" type="attribute" dataSource='eventData' required="true">
+                <property key="endDate" type="attribute" dataSource='eventData' required="true">
                     <caption>End Date</caption>
                     <description />
                     <attributeTypes>
                         <attributeType name="String" />
                     </attributeTypes>
                 </property>
-                <property key="TitleData" type="attribute" dataSource='eventData' required="true">
+                <property key="titleData" type="attribute" dataSource='eventData' required="true">
                     <caption>Title</caption>
                     <description />
                     <attributeTypes>
                         <attributeType name="String" />
                     </attributeTypes>
                 </property>
-                <property key="DescriptionData" type="attribute" dataSource='eventData' required="true">
+                <property key="descriptionData" type="attribute" dataSource='eventData' required="true">
                     <caption>Description</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="String" />
+                    </attributeTypes>
+                </property>
+                <property key="parentResource" type="attribute" dataSource='eventData' required="true">
+                    <caption>Parent Resource</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="String" />
+                    </attributeTypes>
+                </property>
+                <property key="childrenResource" type="attribute" dataSource='eventData' required="true">
+                    <caption>Children Resource</caption>
                     <description />
                     <attributeTypes>
                         <attributeType name="String" />
@@ -95,38 +109,38 @@
                 </property>
             </propertyGroup>
         </propertyGroup>
-        <propertyGroup caption='Create Event'>
+        <propertyGroup caption='New Event Settings'>
             <property key="createEventId" type="attribute" required="false">
-                <caption>Event Id</caption>
+                <caption>New Event ID</caption>
                 <description />
                 <attributeTypes>
-                    <attributeType name="Integer" />
+                    <attributeType name="Long" />
                 </attributeTypes>
             </property>
 
             <property key="createStartDate" type="attribute" required="false">
-                <caption>Start Date</caption>
+                <caption>New Event Start Date</caption>
                 <description />
                 <attributeTypes>
                     <attributeType name="String" />
                 </attributeTypes>
             </property>
             <property key="createEndDate" type="attribute" required="false">
-                <caption>End Date</caption>
+                <caption>New Event End Date</caption>
                 <description />
                 <attributeTypes>
                     <attributeType name="String" />
                 </attributeTypes>
             </property>
             <property key="createTitleData" type="attribute" required="false">
-                <caption>Title</caption>
+                <caption>New Event Title</caption>
                 <description />
                 <attributeTypes>
                     <attributeType name="String" />
                 </attributeTypes>
             </property>
             <property key="createDescriptionData" type="attribute" required="false">
-                <caption>Description</caption>
+                <caption>New Event Description</caption>
                 <description />
                 <attributeTypes>
                     <attributeType name="String" />
@@ -137,13 +151,6 @@
             <property key="saveEventAction" type="action" required="true">
                 <caption>Save Event Action</caption>
                 <description />
-            </property>
-            <property key="widgetActions" type="attribute" required="true">
-                <caption>Event Change Helper</caption>
-                <description />
-                <attributeTypes>
-                    <attributeType name="String" />
-                </attributeTypes>
             </property>
         </propertyGroup>
     </properties>
