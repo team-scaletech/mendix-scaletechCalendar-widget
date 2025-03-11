@@ -74,7 +74,13 @@
                     <caption>Children Data</caption>
                     <description />
                 </property>
-
+                <property key="childrenResourceId" type="attribute" dataSource="childrenData" required="true">
+                    <caption>Children Id</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Long" />
+                    </attributeTypes>
+                </property>
                 <property key="childrenTitle" type="attribute" dataSource="childrenData" required="true">
                     <caption>Children Title</caption>
                     <description />
@@ -89,7 +95,7 @@
                     selectableObjects="parentData"
                     dataSource='childrenData'
                 >
-                    <caption>Parent Association</caption>
+                    <caption>Parent-Child Association</caption>
                     <description />
                     <associationTypes>
                         <associationType name="Reference" />
@@ -100,6 +106,13 @@
                     <caption>Resource Data</caption>
                     <description />
                 </property>
+                <property key="parentResourceId" type="attribute" dataSource="parentData" required="true">
+                    <caption>Parent Id</caption>
+                    <description />
+                    <attributeTypes>
+                        <attributeType name="Long" />
+                    </attributeTypes>
+                </property>
                 <property key="parentTitle" type="attribute" dataSource="parentData" required="true">
                     <caption>Parent Title</caption>
                     <description />
@@ -109,7 +122,7 @@
                 </property>
             </propertyGroup>
         </propertyGroup>
-        <propertyGroup caption='New Event Settings'>
+        <propertyGroup caption='Event Settings'>
             <property key="createEventId" type="attribute" required="false">
                 <caption>New Event ID</caption>
                 <description />
@@ -147,9 +160,43 @@
                 </attributeTypes>
             </property>
         </propertyGroup>
-        <propertyGroup caption='Event'>
+        <propertyGroup caption="New Resource Settings">
+            <property key="createParentId" type="attribute" required="false">
+                <caption>New Parent ID</caption>
+                <description>ID for a new ParentResource</description>
+                <attributeTypes>
+                    <attributeType name="Long" />
+                </attributeTypes>
+            </property>
+            <property key="createParentName" type="attribute" required="false">
+                <caption>New Parent Name</caption>
+                <description>Name for a new ParentResource</description>
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
+            </property>
+            <property key="createChildId" type="attribute" required="false">
+                <caption>New Child ID</caption>
+                <description>ID for a new ChildResource</description>
+                <attributeTypes>
+                    <attributeType name="Long" />
+                </attributeTypes>
+            </property>
+            <property key="createChildName" type="attribute" required="false">
+                <caption>New Child Name</caption>
+                <description>Name for a new ChildResource</description>
+                <attributeTypes>
+                    <attributeType name="String" />
+                </attributeTypes>
+            </property>
+        </propertyGroup>
+        <propertyGroup caption='Action'>
             <property key="saveEventAction" type="action" required="true">
                 <caption>Save Event Action</caption>
+                <description />
+            </property>
+            <property key="saveResourceAction" type="action" required="true">
+                <caption>Save Resource Action</caption>
                 <description />
             </property>
         </propertyGroup>

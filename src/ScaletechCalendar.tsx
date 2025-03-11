@@ -31,15 +31,22 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         childrenResource,
         childrenData,
         childrenTitle,
+        childrenResourceId,
         parentDataAssociation,
         parentData,
+        parentResourceId,
         parentTitle,
         saveEventAction,
         createEventId,
         createStartDate,
         createEndDate,
         createTitleData,
-        createDescriptionData
+        createDescriptionData,
+        createParentId,
+        createParentName,
+        createChildId,
+        createChildName,
+        saveResourceAction
     } = props;
     const [eventValue, setEventValue] = useState<EventVale[]>([]);
     const [resourceValue, setResourceValue] = useState<ResourceValue[]>([]);
@@ -58,7 +65,6 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             setEventValue(formattedEvents as any);
         }
     }, [eventData]);
-    console.warn(eventValue);
 
     useEffect(() => {
         if (parentData?.items && childrenData?.items) {
@@ -68,7 +74,7 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             parentData.items.forEach((parentItem: any) => {
                 const parentId = parentItem.id;
                 parentMap.set(parentId, {
-                    id: parentId,
+                    id: parentResourceId.get(parentItem).value?.toString() || "",
                     title: parentTitle.get(parentItem)?.displayValue ?? "No Title",
                     children: []
                 });
@@ -77,7 +83,7 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             // Assign children to their respective parents
             childrenData.items.forEach((childItem: any) => {
                 const child = {
-                    id: childItem.id,
+                    id: childrenResourceId.get(childItem).value?.toString(),
                     title: childrenTitle.get(childItem)?.displayValue ?? "No Title"
                 };
 
@@ -115,6 +121,11 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             createEndDate={createEndDate}
             createTitleData={createTitleData}
             createDescriptionData={createDescriptionData}
+            createParentId={createParentId}
+            createParentTitle={createParentName}
+            createChildId={createChildId}
+            createChildTitle={createChildName}
+            saveResourceAction={saveResourceAction}
         />
     );
 };

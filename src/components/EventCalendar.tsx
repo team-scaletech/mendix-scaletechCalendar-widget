@@ -17,6 +17,7 @@ import { ActionValue, EditableValue } from "mendix";
 import { Big } from "big.js";
 
 import "@event-calendar/core/index.css";
+import { generateLongId } from "../utils/function";
 
 interface EventCalendarProps {
     eventValue?: EventVale[];
@@ -27,6 +28,11 @@ interface EventCalendarProps {
     createEndDate?: EditableValue<string>;
     createTitleData?: EditableValue<string>;
     createDescriptionData?: EditableValue<string>;
+    createParentId?: EditableValue<Big>;
+    createParentTitle?: EditableValue<string>;
+    createChildId?: EditableValue<Big>;
+    createChildTitle?: EditableValue<string>;
+    saveResourceAction?: ActionValue;
 }
 
 export interface CalendarEvent {
@@ -64,7 +70,12 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         createEndDate,
         createDescriptionData,
         createTitleData,
-        saveEventAction
+        saveEventAction,
+        createParentId,
+        createParentTitle,
+        createChildId,
+        createChildTitle,
+        saveResourceAction
     } = props;
 
     const calendarRef = useRef<HTMLDivElement>(null);
@@ -274,11 +285,6 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     const handleSubmit = () => {
         if (!eventObject) return;
         const { id, start, end, title, extendedProps } = eventObject;
-        const generateLongId = () => {
-            const timestamp = Date.now(); // 13 digits
-            const randomPart = Math.floor(Math.random() * 1e5); // 5 digits to keep it safe
-            return Number(`${timestamp}${randomPart}`);
-        };
 
         const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
 
@@ -319,16 +325,6 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         });
         setIsShowModal({ ...isShowModal, events: true });
     };
-    // const handleEdit = () => {
-    //     const { id } = eventObject;
-
-    //     if (createEventId) {
-    //         const numericId = id !== undefined ? Number(id) : eventValue?.length || 0; // Ensure a valid fallback
-    //         if (!isNaN(numericId)) {
-    //             createEventId.setValue(new Big(numericId)); // Convert only if valid
-    //         }
-    //     }
-    // };
 
     return (
         <div className="container mx-auto p-5">
@@ -351,7 +347,15 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 />
             )}
             {isShowModal.resource && (
-                <ResourcesModal hideModal={hideModal} resources={resource} setResources={setResource} />
+                <ResourcesModal
+                    hideModal={hideModal}
+                    resources={resource}
+                    createParentId={createParentId}
+                    createParentTitle={createParentTitle}
+                    createChildId={createChildId}
+                    createChildTitle={createChildTitle}
+                    saveResourceAction={saveResourceAction}
+                />
             )}
         </div>
     );

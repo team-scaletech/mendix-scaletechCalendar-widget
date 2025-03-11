@@ -21,16 +21,23 @@ export interface ScaletechCalendarContainerProps {
     parentResource: ListAttributeValue<string>;
     childrenResource: ListAttributeValue<string>;
     childrenData: ListValue;
+    childrenResourceId: ListAttributeValue<Big>;
     childrenTitle: ListAttributeValue<string>;
     parentDataAssociation: ListReferenceValue | ListReferenceSetValue;
     parentData: ListValue;
+    parentResourceId: ListAttributeValue<Big>;
     parentTitle: ListAttributeValue<string>;
     createEventId?: EditableValue<Big>;
     createStartDate?: EditableValue<string>;
     createEndDate?: EditableValue<string>;
     createTitleData?: EditableValue<string>;
     createDescriptionData?: EditableValue<string>;
+    createParentId?: EditableValue<Big>;
+    createParentName?: EditableValue<string>;
+    createChildId?: EditableValue<Big>;
+    createChildName?: EditableValue<string>;
     saveEventAction?: ActionValue;
+    saveResourceAction?: ActionValue;
 }
 
 export interface ScaletechCalendarPreviewProps {
@@ -53,14 +60,21 @@ export interface ScaletechCalendarPreviewProps {
     parentResource: string;
     childrenResource: string;
     childrenData: {} | { caption: string } | { type: string } | null;
+    childrenResourceId: string;
     childrenTitle: string;
     parentDataAssociation: string;
     parentData: {} | { caption: string } | { type: string } | null;
+    parentResourceId: string;
     parentTitle: string;
     createEventId: string;
     createStartDate: string;
     createEndDate: string;
     createTitleData: string;
     createDescriptionData: string;
+    createParentId: string;
+    createParentName: string;
+    createChildId: string;
+    createChildName: string;
     saveEventAction: {} | null;
+    saveResourceAction: {} | null;
 }

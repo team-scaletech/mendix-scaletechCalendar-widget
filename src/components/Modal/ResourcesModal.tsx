@@ -1,42 +1,47 @@
 import { createElement, FC, useState } from "react";
 import { ResourceProps } from "../EventCalendar";
 import { CloseIcon } from "src/icon/icon";
+import { ActionValue, EditableValue } from "mendix";
+import { generateLongId } from "../../utils/function";
+import Big from "big.js";
 
 interface ResourcesModalProps {
     hideModal: () => void;
     resources: ResourceProps[];
-    setResources: React.Dispatch<React.SetStateAction<ResourceProps[]>>;
+    createParentId?: EditableValue<Big>;
+    createParentTitle?: EditableValue<string>;
+    createChildId?: EditableValue<Big>;
+    createChildTitle?: EditableValue<string>;
+    saveResourceAction?: ActionValue;
 }
 
-const ResourcesModal: FC<ResourcesModalProps> = ({ hideModal, resources, setResources }) => {
+const ResourcesModal: FC<ResourcesModalProps> = ({
+    hideModal,
+    resources,
+    saveResourceAction,
+    createParentId,
+    createParentTitle,
+    createChildId,
+    createChildTitle
+}) => {
     const [newResourceTitle, setNewResourceTitle] = useState("");
     const [parentResourceId, setParentResourceId] = useState<number | "new">("new");
 
     const handleAddResource = () => {
         if (!newResourceTitle.trim()) return;
+        const numericId = new Big(generateLongId());
 
         if (parentResourceId === "new") {
-            // Create a new parent resource
-            const newResource: ResourceProps = {
-                id: Date.now(),
-                title: newResourceTitle,
-                children: []
-            };
-            setResources([...resources, newResource]);
+            createParentId?.setValue(numericId);
+            createParentTitle?.setValue(newResourceTitle);
         } else {
-            // Add a new child to an existing resource
-            setResources(
-                resources.map(resource =>
-                    resource.id === parentResourceId
-                        ? {
-                              ...resource,
-                              children: [...(resource.children || []), { id: Date.now(), title: newResourceTitle }]
-                          }
-                        : resource
-                )
-            );
+            createParentId?.setValue(new Big(parentResourceId));
+            createChildId?.setValue(numericId);
+            createChildTitle?.setValue(newResourceTitle);
         }
-
+        if (saveResourceAction?.canExecute) {
+            saveResourceAction.execute();
+        }
         // Reset input
         setNewResourceTitle("");
         setParentResourceId("new");
