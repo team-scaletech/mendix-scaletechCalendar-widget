@@ -10,12 +10,12 @@ interface TextEditorProps {
 }
 
 const TextEditor: FC<TextEditorProps> = ({ eventObject, setEventObject, readOnly = false }) => {
-    const quillRef = useRef(null);
-    const handleChange = (e: string) => {
+    const quillRef = useRef<ReactQuill>(null);
+    const handleChange = (content: string) => {
         if (setEventObject) {
             setEventObject({
                 ...eventObject,
-                extendedProps: { description: e }
+                extendedProps: { description: content }
             });
         }
     };
@@ -26,14 +26,7 @@ const TextEditor: FC<TextEditorProps> = ({ eventObject, setEventObject, readOnly
             ["bold", "italic", "underline", "strike", "blockquote"],
             [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
             ["link", "image", "code-block"],
-            ["clean"],
-            [
-                {
-                    imageResize: {
-                        modules: ["Resize", "DisplaySize", "Toolbar"]
-                    }
-                }
-            ]
+            ["clean"]
         ]
     };
 
@@ -43,7 +36,7 @@ const TextEditor: FC<TextEditorProps> = ({ eventObject, setEventObject, readOnly
                 ref={quillRef}
                 theme="snow"
                 modules={modules}
-                value={eventObject.extendedProps.description}
+                value={eventObject.extendedProps.description || ""}
                 onChange={handleChange}
                 readOnly={readOnly}
             />

@@ -17,7 +17,7 @@ import { ActionValue, EditableValue } from "mendix";
 import { Big } from "big.js";
 
 import "@event-calendar/core/index.css";
-import { generateLongId } from "../utils/function";
+import { findParentAndChildId, generateLongId } from "../utils/function";
 
 interface EventCalendarProps {
     eventValue?: EventVale[];
@@ -28,6 +28,8 @@ interface EventCalendarProps {
     createEndDate?: EditableValue<string>;
     createTitleData?: EditableValue<string>;
     createDescriptionData?: EditableValue<string>;
+    createEventParentId?: EditableValue<Big>;
+    createEventChildrenId?: EditableValue<Big>;
     createParentId?: EditableValue<Big>;
     createParentTitle?: EditableValue<string>;
     createChildId?: EditableValue<Big>;
@@ -69,6 +71,8 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         createStartDate,
         createEndDate,
         createDescriptionData,
+        createEventParentId,
+        createEventChildrenId,
         createTitleData,
         saveEventAction,
         createParentId,
@@ -81,28 +85,33 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
     const [resource, setResource] = useState<ResourceProps[]>([]);
-    const events: CalendarEvent[] = useMemo(
-        () =>
-            eventValue?.map(event => ({
-                id: event.id,
-                resourceIds: [15481123719111905],
-                allDay: false,
-                start: new Date(event.startDate),
-                end: new Date(event.endDate),
-                title: event.titleData,
-                editable: true,
-                startEditable: true,
-                durationEditable: true,
-                display: "auto",
-                backgroundColor: "#007bff",
-                textColor: "#ffffff",
-                classNames: ["meeting-event"],
-                styles: ["meeting-event"],
-                extendedProps: { description: event.descriptionData }
-            })) || [],
-        [eventValue]
-    );
+    const events: CalendarEvent[] = useMemo(() => {
+        return (
+            eventValue?.map(event => {
+                const parentId = Number(event.eventParentId);
+                const childId = Number(event.eventChildrenId);
+                const resourceId = isNaN(childId) ? parentId : childId;
 
+                return {
+                    id: event.id,
+                    resourceIds: [resourceId],
+                    allDay: false,
+                    start: new Date(event.startDate),
+                    end: new Date(event.endDate),
+                    title: event.titleData,
+                    editable: true,
+                    startEditable: true,
+                    durationEditable: true,
+                    display: "auto",
+                    backgroundColor: "#007bff",
+                    textColor: "#ffffff",
+                    classNames: ["meeting-event"],
+                    styles: ["meeting-event"],
+                    extendedProps: { description: event.descriptionData }
+                };
+            }) || []
+        );
+    }, [eventValue]);
     const [eventObject, setEventObject] = useState<CalendarEvent>({
         id: "",
         resourceIds: [],
@@ -284,8 +293,8 @@ const EventCalendar: FC<EventCalendarProps> = props => {
 
     const handleSubmit = () => {
         if (!eventObject) return;
-        const { id, start, end, title, extendedProps } = eventObject;
-
+        const { id, start, end, title, extendedProps, resourceIds } = eventObject;
+        const resourceId = findParentAndChildId(resource, resourceIds[0]);
         const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
 
         const newValue = new Big(numericId);
@@ -294,6 +303,14 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         createEndDate?.setValue(end.toString());
         createTitleData?.setValue(title);
         createDescriptionData?.setValue(extendedProps.description);
+        if (resourceId) {
+            if (resourceId.childId) {
+                createEventChildrenId?.setValue(new Big(resourceId.childId));
+                createEventParentId?.setValue(new Big(resourceId.parentId));
+            } else {
+                createEventParentId?.setValue(new Big(resourceId.parentId));
+            }
+        }
 
         if (saveEventAction && saveEventAction.canExecute) {
             saveEventAction.execute();

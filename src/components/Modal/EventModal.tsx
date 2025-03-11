@@ -17,7 +17,6 @@ const EventModal: FC<ModalProps> = props => {
 
     const [selectedParentId, setSelectedParentId] = useState<number | null>(null);
     const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
-
     // Auto-select Parent & Child if eventData.resourceIds is set
     useEffect(() => {
         if (eventObject.resourceIds) {

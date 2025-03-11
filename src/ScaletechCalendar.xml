@@ -54,18 +54,18 @@
                         <attributeType name="String" />
                     </attributeTypes>
                 </property>
-                <property key="parentResource" type="attribute" dataSource='eventData' required="true">
-                    <caption>Parent Resource</caption>
+                <property key="eventParentResourceId" type="attribute" dataSource='eventData' required="true">
+                    <caption>Parent Resource Id</caption>
                     <description />
                     <attributeTypes>
-                        <attributeType name="String" />
+                        <attributeType name="Long" />
                     </attributeTypes>
                 </property>
-                <property key="childrenResource" type="attribute" dataSource='eventData' required="true">
-                    <caption>Children Resource</caption>
+                <property key="eventChildrenResourceId" type="attribute" dataSource='eventData' required="true">
+                    <caption>Children Resource Id</caption>
                     <description />
                     <attributeTypes>
-                        <attributeType name="String" />
+                        <attributeType name="Long" />
                     </attributeTypes>
                 </property>
             </propertyGroup>
@@ -157,6 +157,20 @@
                 <description />
                 <attributeTypes>
                     <attributeType name="String" />
+                </attributeTypes>
+            </property>
+            <property key="createEventParentId" type="attribute" required="false">
+                <caption>New Event ParentId</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="Long" />
+                </attributeTypes>
+            </property>
+            <property key="createEventChildrenId" type="attribute" required="false">
+                <caption>New Event ChildrenId</caption>
+                <description />
+                <attributeTypes>
+                    <attributeType name="Long" />
                 </attributeTypes>
             </property>
         </propertyGroup>

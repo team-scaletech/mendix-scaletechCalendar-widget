@@ -11,8 +11,8 @@ export interface EventVale {
     endDate: string;
     titleData: string;
     descriptionData: string;
-    parentTitle: string;
-    childrenTitle: string;
+    eventParentId: string;
+    eventChildrenId: string;
 }
 export interface ResourceValue {
     id: string;
@@ -27,8 +27,8 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         endDate,
         titleData,
         descriptionData,
-        parentResource,
-        childrenResource,
+        eventChildrenResourceId,
+        eventParentResourceId,
         childrenData,
         childrenTitle,
         childrenResourceId,
@@ -42,6 +42,8 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         createEndDate,
         createTitleData,
         createDescriptionData,
+        createEventParentId,
+        createEventChildrenId,
         createParentId,
         createParentName,
         createChildId,
@@ -59,8 +61,8 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
                 endDate: endDate.get(item).value,
                 titleData: titleData.get(item).value,
                 descriptionData: descriptionData.get(item).value,
-                parentTitle: parentResource.get(item).value,
-                childrenTitle: childrenResource.get(item).value
+                eventParentId: eventParentResourceId.get(item).value,
+                eventChildrenId: eventChildrenResourceId.get(item).value
             }));
             setEventValue(formattedEvents as any);
         }
@@ -126,6 +128,8 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             createChildId={createChildId}
             createChildTitle={createChildName}
             saveResourceAction={saveResourceAction}
+            createEventParentId={createEventParentId}
+            createEventChildrenId={createEventChildrenId}
         />
     );
 };
