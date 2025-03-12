@@ -177,40 +177,44 @@
         <propertyGroup caption="New Resource Settings">
             <property key="createParentId" type="attribute" required="false">
                 <caption>New Parent ID</caption>
-                <description>ID for a new ParentResource</description>
+                <description />
                 <attributeTypes>
                     <attributeType name="Long" />
                 </attributeTypes>
             </property>
             <property key="createParentName" type="attribute" required="false">
                 <caption>New Parent Name</caption>
-                <description>Name for a new ParentResource</description>
+                <description />
                 <attributeTypes>
                     <attributeType name="String" />
                 </attributeTypes>
             </property>
             <property key="createChildId" type="attribute" required="false">
                 <caption>New Child ID</caption>
-                <description>ID for a new ChildResource</description>
+                <description />
                 <attributeTypes>
                     <attributeType name="Long" />
                 </attributeTypes>
             </property>
             <property key="createChildName" type="attribute" required="false">
                 <caption>New Child Name</caption>
-                <description>Name for a new ChildResource</description>
+                <description />
                 <attributeTypes>
                     <attributeType name="String" />
                 </attributeTypes>
             </property>
         </propertyGroup>
         <propertyGroup caption='Action'>
-            <property key="saveEventAction" type="action" required="true">
+            <property key="saveEventAction" type="action" required="false">
                 <caption>Save Event Action</caption>
                 <description />
             </property>
-            <property key="saveResourceAction" type="action" required="true">
+            <property key="saveResourceAction" type="action" required="false">
                 <caption>Save Resource Action</caption>
+                <description />
+            </property>
+            <property key="eventDropAction" type="action" required="false">
+                <caption>Event Drop Action</caption>
                 <description />
             </property>
         </propertyGroup>

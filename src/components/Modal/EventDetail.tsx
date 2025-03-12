@@ -9,15 +9,8 @@ import {
     ParentResourceIcon,
     StartTimeIcon
 } from "src/icon/icon";
-import { CalendarEvent, ResourceProps } from "../EventCalendar";
 import TextEditor from "./TextEditor";
-
-interface EventDetailProps {
-    hideModal: () => void;
-    EditModalShow: () => void;
-    eventObject: CalendarEvent;
-    resources: ResourceProps[];
-}
+import { EventDetailProps } from "src/utils/interface";
 
 const EventDetail: FC<EventDetailProps> = props => {
     const { hideModal, EditModalShow, eventObject, resources } = props;

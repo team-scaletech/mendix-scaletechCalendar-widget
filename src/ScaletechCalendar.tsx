@@ -5,20 +5,8 @@ import EventCalendar from "./components/EventCalendar";
 // import { GUID } from "mendix";
 
 import "./ui/ScaletechCalendar.css";
-export interface EventVale {
-    id: string;
-    startDate: string;
-    endDate: string;
-    titleData: string;
-    descriptionData: string;
-    eventParentId: string;
-    eventChildrenId: string;
-}
-export interface ResourceValue {
-    id: string;
-    title: string;
-    children?: ResourceValue[];
-}
+import { EventVale, ResourceProps } from "./utils/interface";
+
 export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): ReactElement => {
     const {
         eventData,
@@ -48,23 +36,24 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         createParentName,
         createChildId,
         createChildName,
-        saveResourceAction
+        saveResourceAction,
+        eventDropAction
     } = props;
     const [eventValue, setEventValue] = useState<EventVale[]>([]);
-    const [resourceValue, setResourceValue] = useState<ResourceValue[]>([]);
+    const [resource, setResource] = useState<ResourceProps[]>([]);
 
     useEffect(() => {
         if (eventData && eventData.items) {
-            const formattedEvents = eventData.items.map((item: any) => ({
-                id: eventId?.get(item).value?.toString(),
-                startDate: startDate.get(item).value,
-                endDate: endDate.get(item).value,
-                titleData: titleData.get(item).value,
-                descriptionData: descriptionData.get(item).value,
-                eventParentId: eventParentResourceId.get(item).value,
-                eventChildrenId: eventChildrenResourceId.get(item).value
+            const formattedEvents: EventVale[] = eventData.items.map((item: any) => ({
+                id: eventId?.get(item).value?.toString() || "",
+                startDate: startDate.get(item).value || "",
+                endDate: endDate.get(item).value || "",
+                titleData: titleData.get(item).value || "",
+                descriptionData: descriptionData.get(item).value || "",
+                eventParentId: eventParentResourceId.get(item).value?.toString() || "",
+                eventChildrenId: eventChildrenResourceId.get(item).value?.toString() || ""
             }));
-            setEventValue(formattedEvents as any);
+            setEventValue(formattedEvents);
         }
     }, [eventData]);
 
@@ -109,14 +98,23 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             });
 
             const finalResourceValue = Array.from(parentMap.values());
-            setResourceValue(finalResourceValue);
+            setResource(
+                finalResourceValue.map(r => ({
+                    id: Number(r.id), // Convert ID from string to number
+                    title: r.title,
+                    children: r.children?.map(child => ({
+                        id: Number(child.id), // Convert child ID from string to number
+                        title: child.title
+                    }))
+                }))
+            );
         }
     }, [parentData, childrenData]);
 
     return (
         <EventCalendar
             eventValue={eventValue}
-            resourceValue={resourceValue}
+            resource={resource}
             saveEventAction={saveEventAction}
             createEventId={createEventId}
             createStartDate={createStartDate}
@@ -130,6 +128,7 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             saveResourceAction={saveResourceAction}
             createEventParentId={createEventParentId}
             createEventChildrenId={createEventChildrenId}
+            eventDropAction={eventDropAction}
         />
     );
 };

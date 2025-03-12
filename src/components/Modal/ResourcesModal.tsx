@@ -1,19 +1,8 @@
 import { createElement, FC, useState } from "react";
-import { ResourceProps } from "../EventCalendar";
 import { CloseIcon } from "src/icon/icon";
-import { ActionValue, EditableValue } from "mendix";
+import { ResourcesModalProps } from "src/utils/interface";
 import { generateLongId } from "../../utils/function";
 import Big from "big.js";
-
-interface ResourcesModalProps {
-    hideModal: () => void;
-    resources: ResourceProps[];
-    createParentId?: EditableValue<Big>;
-    createParentTitle?: EditableValue<string>;
-    createChildId?: EditableValue<Big>;
-    createChildTitle?: EditableValue<string>;
-    saveResourceAction?: ActionValue;
-}
 
 const ResourcesModal: FC<ResourcesModalProps> = ({
     hideModal,

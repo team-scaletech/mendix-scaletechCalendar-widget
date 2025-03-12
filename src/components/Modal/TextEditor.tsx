@@ -1,13 +1,7 @@
 import { createElement, FC, useRef } from "react";
 import ReactQuill from "react-quill";
+import { TextEditorProps } from "src/utils/interface";
 import "react-quill/dist/quill.snow.css";
-import { CalendarEvent } from "../EventCalendar";
-
-interface TextEditorProps {
-    eventObject: CalendarEvent;
-    setEventObject?: React.Dispatch<React.SetStateAction<CalendarEvent>>;
-    readOnly?: boolean;
-}
 
 const TextEditor: FC<TextEditorProps> = ({ eventObject, setEventObject, readOnly = false }) => {
     const quillRef = useRef<ReactQuill>(null);

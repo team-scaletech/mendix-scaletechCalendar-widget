@@ -1,10 +1,12 @@
+import { ResourceProps } from "./interface";
+
 export const generateLongId = () => {
     const timestamp = Date.now();
     const randomPart = Math.floor(Math.random() * 1e5);
     return Number(`${timestamp}${randomPart}`);
 };
 
-export const findParentAndChildId = (resource: any, eventId: any) => {
+export const findParentAndChildId = (resource: ResourceProps[], eventId: number) => {
     for (const parent of resource) {
         // Check if the eventId matches the parent id
         if (parent.id === eventId) {
