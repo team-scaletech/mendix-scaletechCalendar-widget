@@ -1,23 +1,14 @@
 import { createElement, FC, useEffect, useState } from "react";
 
-import { CalendarEvent, ResourceProps } from "../EventCalendar";
 import TextEditor from "./TextEditor";
 import { CloseIcon } from "src/icon/icon";
-
-interface ModalProps {
-    hideModal: () => void;
-    handleSubmit: () => void;
-    eventObject: CalendarEvent;
-    setEventObject: React.Dispatch<React.SetStateAction<CalendarEvent>>;
-    resources: ResourceProps[];
-}
+import { ModalProps } from "src/utils/interface";
 
 const EventModal: FC<ModalProps> = props => {
     const { hideModal, handleSubmit, eventObject, setEventObject, resources } = props;
 
     const [selectedParentId, setSelectedParentId] = useState<number | null>(null);
     const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
-
     // Auto-select Parent & Child if eventData.resourceIds is set
     useEffect(() => {
         if (eventObject.resourceIds) {

@@ -12,100 +12,60 @@ import EventModal from "./Modal/EventModal";
 import ResourcesModal from "./Modal/ResourcesModal";
 import EventDetail from "./Modal/EventDetail";
 
-import { EventVale, ResourceValue } from "src/ScaletechCalendar";
-import { ActionValue, EditableValue } from "mendix";
+import { findParentAndChildId, generateLongId } from "../utils/function";
+import { CalendarEvent, EventCalendarProps } from "src/utils/interface";
 import { Big } from "big.js";
 
 import "@event-calendar/core/index.css";
 
-interface EventCalendarProps {
-    eventValue?: EventVale[];
-    resourceValue?: ResourceValue[];
-    saveEventAction?: ActionValue;
-    createEventId?: EditableValue<Big>;
-    createStartDate?: EditableValue<string>;
-    createEndDate?: EditableValue<string>;
-    createTitleData?: EditableValue<string>;
-    createDescriptionData?: EditableValue<string>;
-    widgetActions?: EditableValue<string>;
-}
-
-export interface CalendarEvent {
-    id: string;
-    resourceIds: number[];
-    allDay: boolean;
-    start: Date;
-    end: Date;
-    title: string;
-    editable: boolean;
-    startEditable: boolean;
-    durationEditable: boolean;
-    display: "auto" | "background" | "ghost" | "preview" | "pointer";
-    backgroundColor: string;
-    textColor: string;
-    classNames: string[];
-    styles: string[]; // Use classNames instead of styles
-    extendedProps: {
-        description: string;
-    };
-}
-
-export interface ResourceProps {
-    id: number;
-    title: string;
-    children?: ResourceProps[];
-}
-
 const EventCalendar: FC<EventCalendarProps> = props => {
     const {
         eventValue,
-        resourceValue,
-        // createDescriptionData,
-        // createEndDate,
-        // createStartDate,
-        // createTitleData,
+        resource = [],
+        createEventId,
+        createStartDate,
+        createEndDate,
+        createDescriptionData,
+        createEventParentId,
+        createEventChildrenId,
+        createTitleData,
         saveEventAction,
-        // createEventId,
-        widgetActions
+        createParentId,
+        createParentTitle,
+        createChildId,
+        createChildTitle,
+        saveResourceAction,
+        eventDropAction
     } = props;
-
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
-    const [resource, setResource] = useState<ResourceProps[]>(
-        resourceValue
-            ? resourceValue.map(r => ({
-                  id: Number(r.id), // Convert ID from string to number
-                  title: r.title,
-                  children: r.children?.map(child => ({
-                      id: Number(child.id), // Convert child ID from string to number
-                      title: child.title
-                  }))
-              }))
-            : []
-    );
+    const events: CalendarEvent[] = useMemo(() => {
+        return (
+            eventValue?.map(event => {
+                const parentId = Number(event.eventParentId);
+                const childId = Number(event.eventChildrenId);
+                const resourceId = isNaN(childId) ? parentId : childId;
 
-    const events: CalendarEvent[] = useMemo(
-        () =>
-            eventValue?.map(event => ({
-                id: event.id,
-                resourceIds: [15481123719111905],
-                allDay: false,
-                start: new Date(event.StartDate),
-                end: new Date(event.EndDate),
-                title: event.TitleData,
-                editable: true,
-                startEditable: true,
-                durationEditable: true,
-                display: "auto",
-                backgroundColor: "#007bff",
-                textColor: "#ffffff",
-                classNames: ["meeting-event"],
-                styles: ["meeting-event"],
-                extendedProps: { description: event.DescriptionData }
-            })) || [],
-        [eventValue]
-    );
-
+                return {
+                    id: event.id,
+                    resourceIds: [resourceId],
+                    allDay: false,
+                    start: new Date(event.startDate),
+                    end: new Date(event.endDate),
+                    title: event.titleData,
+                    editable: true,
+                    startEditable: true,
+                    durationEditable: true,
+                    display: "auto",
+                    backgroundColor: "#007bff",
+                    textColor: "#ffffff",
+                    classNames: ["meeting-event"],
+                    styles: ["meeting-event"],
+                    extendedProps: { description: event.descriptionData }
+                };
+            }) || []
+        );
+    }, [eventValue]);
     const [eventObject, setEventObject] = useState<CalendarEvent>({
         id: "",
         resourceIds: [],
@@ -128,6 +88,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         events: false,
         resource: false
     });
+    const [isDrop, setIsDrop] = useState(false);
 
     useEffect(() => {
         if (calendarRef.current && !calendarInstance) {
@@ -149,22 +110,27 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                             center: "title",
                             end: "dayGridMonth,timeGridWeek,timeGridDay,listWeek,resourceTimeGridWeek,resourceTimelineDay "
                         },
-                        resources: resourceValue,
                         selectable: true,
                         nowIndicator: true,
                         editable: true,
                         events: events,
+                        resources: resource,
                         allDaySlot: true,
 
                         select: handleSelect,
                         dateClick: handleDateClick,
                         eventClick: handleEventClick,
+                        eventDrop: handleEventDrop,
+                        eventResize: handleEventDrop,
                         views: {
-                            timeGridWeek: { pointer: true },
-                            resourceTimeGridWeek: { pointer: true },
+                            timeGridWeek: {
+                                pointer: true
+                            },
+                            resourceTimeGridWeek: {
+                                pointer: true
+                            },
                             resourceTimelineDay: {
-                                pointer: true,
-                                resources: resource
+                                pointer: true
                             }
                         }
                     }
@@ -202,7 +168,12 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         if (calendarInstance) {
             calendarInstance.setOption("resources", resource);
         }
-    }, [resource]);
+    }, [resource, calendarInstance]);
+    useEffect(() => {
+        if (isDrop) {
+            EventDragAndDrop();
+        }
+    }, [isDrop]);
 
     const showModal = () => {
         setIsShowModal({
@@ -272,34 +243,87 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         showModal();
     };
 
+    const handleEventDrop = (dropInfo: { event: any }) => {
+        const {
+            id,
+            start,
+            end,
+            allDay,
+            title,
+            extendedProps,
+            resourceIds,
+            editable,
+            startEditable,
+            durationEditable,
+            display,
+            backgroundColor,
+            textColor,
+            classNames
+        } = dropInfo.event;
+        setEventObject({
+            id: id,
+            resourceIds: resourceIds || [],
+            allDay: allDay || false,
+            start: formatDateToLocal(start) as any,
+            end: formatDateToLocal(end || new Date(start).getTime() + 60 * 60 * 1000) as any,
+            title: title,
+            editable: editable ?? true,
+            startEditable: startEditable ?? true,
+            durationEditable: durationEditable ?? true,
+            display: (display as "auto" | "background" | "ghost" | "preview" | "pointer") || "auto",
+            backgroundColor: backgroundColor || "#007bff",
+            textColor: textColor || "#ffffff",
+            classNames: classNames || [],
+            styles: [],
+            extendedProps: extendedProps || { description: "" }
+        });
+        setIsDrop(true);
+    };
+    const EventDragAndDrop = () => {
+        if (!eventObject) return;
+        const { id, start, end, title, extendedProps, resourceIds } = eventObject;
+        const resourceId = findParentAndChildId(resource, Number(resourceIds[0]));
+        const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
+
+        const newValue = new Big(numericId);
+        createEventId?.setValue(newValue);
+        createStartDate?.setValue(start.toString());
+        createEndDate?.setValue(end.toString());
+        createTitleData?.setValue(title);
+        createDescriptionData?.setValue(extendedProps.description);
+        if (resourceId) {
+            if (resourceId.childId) {
+                createEventChildrenId?.setValue(new Big(resourceId.childId));
+                createEventParentId?.setValue(new Big(resourceId.parentId));
+            } else {
+                createEventParentId?.setValue(new Big(resourceId.parentId));
+            }
+        }
+        if (eventDropAction && eventDropAction.canExecute) {
+            eventDropAction.execute();
+        }
+        setIsDrop(false);
+    };
+
     const handleSubmit = () => {
         if (!eventObject) return;
-        const { id, start, end, title, extendedProps } = eventObject;
-        const generateLongId = () => {
-            return `${Date.now()}${Math.floor(Math.random() * 1e9)}`;
-        };
-
+        const { id, start, end, title, extendedProps, resourceIds } = eventObject;
+        const resourceId = findParentAndChildId(resource, Number(resourceIds[0]));
         const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
-        if (id) {
-            const editJSON = {
-                Action: "edit",
-                EventId: numericId,
-                StartDate: new Date(start).toISOString(),
-                EndDate: new Date(end).toISOString(),
-                Title: title,
-                Description: extendedProps?.description
-            };
-            widgetActions?.setValue(JSON.stringify(editJSON));
-        } else {
-            const createJSON = {
-                Action: "add",
-                EventId: numericId,
-                StartDate: new Date(start).toISOString(),
-                EndDate: new Date(end).toISOString(),
-                Title: title,
-                Description: extendedProps?.description
-            };
-            widgetActions?.setValue(JSON.stringify(createJSON));
+
+        const newValue = new Big(numericId);
+        createEventId?.setValue(newValue);
+        createStartDate?.setValue(start.toString());
+        createEndDate?.setValue(end.toString());
+        createTitleData?.setValue(title);
+        createDescriptionData?.setValue(extendedProps.description);
+        if (resourceId) {
+            if (resourceId.childId) {
+                createEventChildrenId?.setValue(new Big(resourceId.childId));
+                createEventParentId?.setValue(new Big(resourceId.parentId));
+            } else {
+                createEventParentId?.setValue(new Big(resourceId.parentId));
+            }
         }
 
         if (saveEventAction && saveEventAction.canExecute) {
@@ -332,16 +356,6 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         });
         setIsShowModal({ ...isShowModal, events: true });
     };
-    // const handleEdit = () => {
-    //     const { id } = eventObject;
-
-    //     if (createEventId) {
-    //         const numericId = id !== undefined ? Number(id) : eventValue?.length || 0; // Ensure a valid fallback
-    //         if (!isNaN(numericId)) {
-    //             createEventId.setValue(new Big(numericId)); // Convert only if valid
-    //         }
-    //     }
-    // };
 
     return (
         <div className="container mx-auto p-5">
@@ -364,7 +378,15 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 />
             )}
             {isShowModal.resource && (
-                <ResourcesModal hideModal={hideModal} resources={resource} setResources={setResource} />
+                <ResourcesModal
+                    hideModal={hideModal}
+                    resources={resource}
+                    createParentId={createParentId}
+                    createParentTitle={createParentTitle}
+                    createChildId={createChildId}
+                    createChildTitle={createChildTitle}
+                    saveResourceAction={saveResourceAction}
+                />
             )}
         </div>
     );
