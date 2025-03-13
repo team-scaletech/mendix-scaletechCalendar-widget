@@ -25,3 +25,25 @@ export const findParentAndChildId = (resource: ResourceProps[], eventId: number)
     // If not found, return null or an empty object
     return null;
 };
+
+const colorPalette = [
+    "#b29dd9",
+    "#779ecb",
+    "#fe6b64",
+    "#ffb347",
+    "#9acd32",
+    "#87cefa",
+    "#e6e6fa",
+    "#f4a460",
+    "#dda0dd ",
+    "#f08080"
+];
+
+export const generateColorById = (id: string): string => {
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+        hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % colorPalette.length;
+    return colorPalette[index];
+};

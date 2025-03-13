@@ -12,7 +12,7 @@ import EventModal from "./Modal/EventModal";
 import ResourcesModal from "./Modal/ResourcesModal";
 import EventDetail from "./Modal/EventDetail";
 
-import { findParentAndChildId, generateLongId } from "../utils/function";
+import { findParentAndChildId, generateColorById, generateLongId } from "../utils/function";
 import { CalendarEvent, EventCalendarProps } from "src/utils/interface";
 import { Big } from "big.js";
 
@@ -39,6 +39,8 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     } = props;
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
+    const [currentView, setCurrentView] = useState<string>("dayGridMonth");
+
     const events: CalendarEvent[] = useMemo(() => {
         return (
             eventValue?.map(event => {
@@ -57,7 +59,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                     startEditable: true,
                     durationEditable: true,
                     display: "auto",
-                    backgroundColor: "#007bff",
+                    backgroundColor: generateColorById(event.id),
                     textColor: "#ffffff",
                     classNames: ["meeting-event"],
                     styles: ["meeting-event"],
@@ -90,6 +92,14 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     });
     const [isDrop, setIsDrop] = useState(false);
 
+    const parentResources = useMemo(() => {
+        return resource.map(res => ({
+            id: res.id,
+            title: res.title,
+            children: []
+        }));
+    }, [resource]);
+
     useEffect(() => {
         if (calendarRef.current && !calendarInstance) {
             const newCalendar = new Calendar({
@@ -97,7 +107,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 props: {
                     plugins: [TimeGrid, DayGrid, listPlugin, ResourceTimeline, ResourceTimeGrid, Interaction], // Move plugins inside props
                     options: {
-                        view: "dayGridMonth",
+                        view: currentView,
                         customButtons: {
                             myCustomButton: {
                                 text: "Resource",
@@ -114,14 +124,15 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                         nowIndicator: true,
                         editable: true,
                         events: events,
-                        resources: resource,
                         allDaySlot: true,
-
                         select: handleSelect,
                         dateClick: handleDateClick,
                         eventClick: handleEventClick,
                         eventDrop: handleEventDrop,
                         eventResize: handleEventDrop,
+                        datesSet: dateInfo => {
+                            setCurrentView(dateInfo.view.type);
+                        },
                         views: {
                             timeGridWeek: {
                                 pointer: true
@@ -166,9 +177,13 @@ const EventCalendar: FC<EventCalendarProps> = props => {
 
     useEffect(() => {
         if (calendarInstance) {
-            calendarInstance.setOption("resources", resource);
+            if (currentView === "resourceTimeGridWeek") {
+                calendarInstance.setOption("resources", parentResources);
+            } else {
+                calendarInstance.setOption("resources", resource);
+            }
         }
-    }, [resource, calendarInstance]);
+    }, [resource, currentView]);
     useEffect(() => {
         if (isDrop) {
             EventDragAndDrop();
@@ -358,7 +373,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     };
 
     return (
-        <div className="container mx-auto p-5">
+        <div className="calendar-wrapper">
             <div ref={calendarRef}></div>
             {isShowModal.detail && (
                 <EventDetail
