@@ -121,6 +121,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                         dateClick: handleDateClick,
                         eventClick: handleEventClick,
                         eventDrop: handleEventDrop,
+                        eventResize: handleEventDrop,
                         views: {
                             timeGridWeek: {
                                 pointer: true
@@ -281,7 +282,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     const EventDragAndDrop = () => {
         if (!eventObject) return;
         const { id, start, end, title, extendedProps, resourceIds } = eventObject;
-        const resourceId = findParentAndChildId(resource, resourceIds[0]);
+        const resourceId = findParentAndChildId(resource, Number(resourceIds[0]));
         const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
 
         const newValue = new Big(numericId);
@@ -298,7 +299,6 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 createEventParentId?.setValue(new Big(resourceId.parentId));
             }
         }
-        // Execute the event drop action
         if (eventDropAction && eventDropAction.canExecute) {
             eventDropAction.execute();
         }
@@ -308,7 +308,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     const handleSubmit = () => {
         if (!eventObject) return;
         const { id, start, end, title, extendedProps, resourceIds } = eventObject;
-        const resourceId = findParentAndChildId(resource, resourceIds[0]);
+        const resourceId = findParentAndChildId(resource, Number(resourceIds[0]));
         const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
 
         const newValue = new Big(numericId);
