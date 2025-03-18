@@ -38,9 +38,9 @@ export interface ScaletechCalendarContainerProps {
     createParentName?: EditableValue<string>;
     createChildId?: EditableValue<Big>;
     createChildName?: EditableValue<string>;
+    eventDropAction?: ActionValue;
     saveEventAction?: ActionValue;
     saveResourceAction?: ActionValue;
-    eventDropAction?: ActionValue;
 }
 
 export interface ScaletechCalendarPreviewProps {
@@ -80,7 +80,7 @@ export interface ScaletechCalendarPreviewProps {
     createParentName: string;
     createChildId: string;
     createChildName: string;
+    eventDropAction: {} | null;
     saveEventAction: {} | null;
     saveResourceAction: {} | null;
-    eventDropAction: {} | null;
 }

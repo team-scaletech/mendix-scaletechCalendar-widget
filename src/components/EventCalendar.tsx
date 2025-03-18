@@ -8,13 +8,14 @@ import ResourceTimeline from "@event-calendar/resource-timeline";
 import ResourceTimeGrid from "@event-calendar/resource-time-grid";
 import Interaction from "@event-calendar/interaction";
 
+import { Big } from "big.js";
+
 import EventModal from "./Modal/EventModal";
 import ResourcesModal from "./Modal/ResourcesModal";
 import EventDetail from "./Modal/EventDetail";
 
 import { findParentAndChildId, generateColorById, generateLongId } from "../utils/function";
 import { CalendarEvent, EventCalendarProps } from "src/utils/interface";
-import { Big } from "big.js";
 
 import "@event-calendar/core/index.css";
 
@@ -37,6 +38,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         saveResourceAction,
         eventDropAction
     } = props;
+
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
     const [currentView, setCurrentView] = useState<string>("dayGridMonth");
@@ -181,6 +183,34 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                 calendarInstance.setOption("resources", parentResources);
             } else {
                 calendarInstance.setOption("resources", resource);
+            }
+            if (currentView === "dayGridMonth") {
+                calendarInstance.setOption("eventContent", arg => {
+                    const { event } = arg;
+                    const date = new Date(event.start);
+                    const options = { hour: "2-digit", minute: "2-digit", hour12: true };
+                    const formattedTime = date.toLocaleTimeString("en-US", options as any);
+                    const title = event.title || "";
+                    const description = event.extendedProps?.description || "";
+
+                    return {
+                        html: `
+                            <div class="ec-event-details">
+                                <div class="ec-time-title">
+                                    <div class="ec-event-time">${formattedTime}</div>
+                                    <div class="ec-event-title">${title}</div>
+                                </div>
+                                ${
+                                    description
+                                        ? `<div class="ec-event-description" style="font-size: 0.8em; opacity: 0.8;">${description}</div>`
+                                        : ""
+                                }
+                            </div>
+                        `
+                    };
+                });
+            } else {
+                calendarInstance.setOption("eventContent", undefined);
             }
         }
     }, [resource, currentView]);

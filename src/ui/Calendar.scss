@@ -196,6 +196,27 @@
     }
     .ec-draggable {
         .ec-event-body {
+            .ec-event-details {
+                display: flex;
+                flex-direction: column;
+                .ec-time-title {
+                    display: flex;
+                    .ec-event-time,
+                    .ec-event-title {
+                        font-size: 14px;
+                        color: white;
+                    }
+                    .ec-event-title {
+                        margin-left: 4px;
+                    }
+                }
+                .ec-event-description {
+                    p {
+                        margin: 0px;
+                        font-size: 12px;
+                    }
+                }
+            }
             .ec-event-time,
             .ec-event-title {
                 font-size: 14px;
@@ -211,6 +232,18 @@
         .ec-event-title {
             font-size: 14px;
             color: black;
+        }
+        .ec-time-title {
+            display: flex;
+            .ec-event-time,
+            .ec-event-title {
+                font-size: 14px;
+                color: black;
+                font-weight: 800;
+            }
+            .ec-event-title {
+                margin-left: 4px;
+            }
         }
     }
 }

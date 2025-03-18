@@ -174,7 +174,7 @@
                 </attributeTypes>
             </property>
         </propertyGroup>
-        <propertyGroup caption="New Resource Settings">
+        <propertyGroup caption="Resource Settings">
             <property key="createParentId" type="attribute" required="false">
                 <caption>New Parent ID</caption>
                 <description />
@@ -205,16 +205,16 @@
             </property>
         </propertyGroup>
         <propertyGroup caption='Action'>
+            <property key="eventDropAction" type="action" required="false">
+                <caption>Event Drop Action</caption>
+                <description />
+            </property>
             <property key="saveEventAction" type="action" required="false">
                 <caption>Save Event Action</caption>
                 <description />
             </property>
             <property key="saveResourceAction" type="action" required="false">
                 <caption>Save Resource Action</caption>
-                <description />
-            </property>
-            <property key="eventDropAction" type="action" required="false">
-                <caption>Event Drop Action</caption>
                 <description />
             </property>
         </propertyGroup>
