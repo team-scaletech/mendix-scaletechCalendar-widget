@@ -9,7 +9,10 @@ const TextEditor: FC<TextEditorProps> = ({ eventObject, setEventObject, readOnly
         if (setEventObject) {
             setEventObject({
                 ...eventObject,
-                extendedProps: { description: content }
+                extendedProps: {
+                    ...eventObject.extendedProps, // Preserve existing properties
+                    description: content
+                }
             });
         }
     };

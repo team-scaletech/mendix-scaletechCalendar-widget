@@ -1,4 +1,5 @@
 import { createElement, FC, useEffect, useMemo, useRef, useState } from "react";
+import ReactDOM from "react-dom";
 
 import Calendar from "@event-calendar/core";
 import TimeGrid from "@event-calendar/time-grid";
@@ -7,6 +8,7 @@ import listPlugin from "@event-calendar/list";
 import ResourceTimeline from "@event-calendar/resource-timeline";
 import ResourceTimeGrid from "@event-calendar/resource-time-grid";
 import Interaction from "@event-calendar/interaction";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { Big } from "big.js";
 
@@ -14,11 +16,10 @@ import EventModal from "./Modal/EventModal";
 import ResourcesModal from "./Modal/ResourcesModal";
 import EventDetail from "./Modal/EventDetail";
 
-import { findParentAndChildId, generateColorById, generateLongId } from "../utils/function";
+import { findParentAndChildId, generateLongId } from "../utils/function";
 import { CalendarEvent, EventCalendarProps } from "src/utils/interface";
 
 import "@event-calendar/core/index.css";
-
 const EventCalendar: FC<EventCalendarProps> = props => {
     const {
         eventValue,
@@ -30,6 +31,8 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         createEventParentId,
         createEventChildrenId,
         createTitleData,
+        createEventColor,
+        createIconClass,
         saveEventAction,
         createParentId,
         createParentTitle,
@@ -38,7 +41,6 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         saveResourceAction,
         eventDropAction
     } = props;
-
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
     const [currentView, setCurrentView] = useState<string>("dayGridMonth");
@@ -61,11 +63,11 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                     startEditable: true,
                     durationEditable: true,
                     display: "auto",
-                    backgroundColor: generateColorById(event.id),
+                    backgroundColor: event.eventColor,
                     textColor: "#ffffff",
                     classNames: ["meeting-event"],
                     styles: ["meeting-event"],
-                    extendedProps: { description: event.descriptionData }
+                    extendedProps: { description: event.descriptionData, iconClass: event.iconClass }
                 };
             }) || []
         );
@@ -85,7 +87,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         textColor: "#ffffff",
         classNames: [],
         styles: [],
-        extendedProps: { description: "" }
+        extendedProps: { description: "", iconClass: "" }
     });
     const [isShowModal, setIsShowModal] = useState({
         detail: false,
@@ -101,7 +103,6 @@ const EventCalendar: FC<EventCalendarProps> = props => {
             children: []
         }));
     }, [resource]);
-
     useEffect(() => {
         if (calendarRef.current && !calendarInstance) {
             const newCalendar = new Calendar({
@@ -192,25 +193,95 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                     const formattedTime = date.toLocaleTimeString("en-US", options as any);
                     const title = event.title || "";
                     const description = event.extendedProps?.description || "";
+                    const Icon = event.extendedProps.iconClass || "";
 
-                    return {
-                        html: `
-                            <div class="ec-event-details">
-                                <div class="ec-time-title">
-                                    <div class="ec-event-time">${formattedTime}</div>
-                                    <div class="ec-event-title">${title}</div>
-                                </div>
-                                ${
-                                    description
-                                        ? `<div class="ec-event-description" style="font-size: 0.8em; opacity: 0.8;">${description}</div>`
-                                        : ""
-                                }
-                            </div>
-                        `
-                    };
+                    // Create the main wrapper div
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "ec-event-details";
+
+                    // Time & Title container
+                    const timeTitleIconContainer = document.createElement("div");
+                    timeTitleIconContainer.className = "ec-time-title-icon";
+
+                    const timeTitleContainer = document.createElement("div");
+                    timeTitleContainer.className = "ec-time-title";
+
+                    const timeDiv = document.createElement("div");
+                    timeDiv.className = "ec-event-time";
+                    timeDiv.textContent = formattedTime;
+
+                    const titleDiv = document.createElement("div");
+                    titleDiv.className = "ec-event-title";
+                    titleDiv.textContent = title as string;
+
+                    timeTitleIconContainer.appendChild(timeTitleContainer);
+
+                    // Icon container
+                    const iconDiv = document.createElement("div");
+                    iconDiv.className = "ec-event-time";
+
+                    // Create FontAwesomeIcon component
+                    const fontAwesomeIcon = <FontAwesomeIcon icon={Icon as any} />;
+                    const fontAwesomeContainer = document.createElement("span");
+
+                    // Render React component into real DOM node
+                    ReactDOM.render(fontAwesomeIcon, fontAwesomeContainer);
+
+                    // Append icon elements
+
+                    iconDiv.appendChild(fontAwesomeContainer);
+
+                    // Append everything together
+                    timeTitleContainer.appendChild(timeDiv);
+                    timeTitleContainer.appendChild(titleDiv);
+                    timeTitleIconContainer.appendChild(iconDiv);
+
+                    wrapper.appendChild(timeTitleIconContainer);
+
+                    if (description) {
+                        const descDiv = document.createElement("div");
+                        descDiv.className = "ec-event-description";
+                        descDiv.innerHTML = description as string;
+                        wrapper.appendChild(descDiv);
+                    }
+
+                    return { domNodes: [wrapper] };
                 });
             } else {
-                calendarInstance.setOption("eventContent", undefined);
+                calendarInstance.setOption("eventContent", arg => {
+                    const { event } = arg;
+                    const title = event.title || "";
+                    const iconClass = event.extendedProps?.iconClass || "";
+
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "ec-event-details";
+
+                    const timeTitleContainer = document.createElement("div");
+                    timeTitleContainer.className = "ec-time-title-icon";
+
+                    const titleDiv = document.createElement("div");
+                    titleDiv.className = "ec-event-title";
+                    titleDiv.textContent = title as string;
+
+                    const iconDiv = document.createElement("div");
+                    iconDiv.className = "ec-event-time";
+
+                    // Create FontAwesomeIcon component
+                    const fontAwesomeIcon = <FontAwesomeIcon icon={iconClass as any} />;
+                    const fontAwesomeContainer = document.createElement("span");
+
+                    // Render React component into real DOM node
+                    ReactDOM.render(fontAwesomeIcon, fontAwesomeContainer);
+
+                    iconDiv.appendChild(fontAwesomeContainer);
+
+                    timeTitleContainer.appendChild(titleDiv);
+                    timeTitleContainer.appendChild(iconDiv);
+
+                    wrapper.appendChild(timeTitleContainer);
+
+                    return { domNodes: [wrapper] };
+                });
             }
         }
     }, [resource, currentView]);
@@ -261,7 +332,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
             textColor: "#ffffff",
             classNames: [],
             styles: [],
-            extendedProps: { description: "" }
+            extendedProps: { description: "", iconClass: "" }
         });
         setIsShowModal({ ...isShowModal, events: true });
     };
@@ -283,7 +354,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
             textColor: clickInfo.event.textColor || "#ffffff",
             classNames: clickInfo.event.classNames || [],
             styles: [],
-            extendedProps: clickInfo.event.extendedProps || { description: "" }
+            extendedProps: clickInfo.event.extendedProps || { description: "", iconClass: "" }
         });
         showModal();
     };
@@ -320,13 +391,13 @@ const EventCalendar: FC<EventCalendarProps> = props => {
             textColor: textColor || "#ffffff",
             classNames: classNames || [],
             styles: [],
-            extendedProps: extendedProps || { description: "" }
+            extendedProps: extendedProps || { description: "", iconClass: "" }
         });
         setIsDrop(true);
     };
     const EventDragAndDrop = () => {
         if (!eventObject) return;
-        const { id, start, end, title, extendedProps, resourceIds } = eventObject;
+        const { id, start, end, title, extendedProps, resourceIds, backgroundColor } = eventObject;
         const resourceId = findParentAndChildId(resource, Number(resourceIds[0]));
         const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
 
@@ -336,6 +407,8 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         createEndDate?.setValue(end.toString());
         createTitleData?.setValue(title);
         createDescriptionData?.setValue(extendedProps.description);
+        createEventColor?.setValue(backgroundColor);
+        createIconClass?.setValue(extendedProps.iconClass);
         if (resourceId) {
             if (resourceId.childId) {
                 createEventChildrenId?.setValue(new Big(resourceId.childId));
@@ -352,7 +425,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
 
     const handleSubmit = () => {
         if (!eventObject) return;
-        const { id, start, end, title, extendedProps, resourceIds } = eventObject;
+        const { id, start, end, title, extendedProps, resourceIds, backgroundColor } = eventObject;
         const resourceId = findParentAndChildId(resource, Number(resourceIds[0]));
         const numericId = id && !isNaN(Number(id)) && Number(id) !== 0 ? id : generateLongId();
 
@@ -362,6 +435,8 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         createEndDate?.setValue(end.toString());
         createTitleData?.setValue(title);
         createDescriptionData?.setValue(extendedProps.description);
+        createEventColor?.setValue(backgroundColor);
+        createIconClass?.setValue(extendedProps.iconClass);
         if (resourceId) {
             if (resourceId.childId) {
                 createEventChildrenId?.setValue(new Big(resourceId.childId));
@@ -397,7 +472,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
             textColor: "#ffffff",
             classNames: [],
             styles: [],
-            extendedProps: { description: "" }
+            extendedProps: { description: "", iconClass: "" }
         });
         setIsShowModal({ ...isShowModal, events: true });
     };

@@ -19,6 +19,44 @@
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             width: 600px;
+
+            .modal-tabs {
+                display: flex;
+                border-bottom: 2px solid #e0e0e0;
+                margin-bottom: 10px;
+                gap: 15px;
+                button {
+                    background: none;
+                    border: none;
+                    padding: 8px 0px;
+                    font-size: 15px;
+                    cursor: pointer;
+                    color: #6c757d;
+                    border-bottom: 2px solid transparent;
+                    transition: all 0.3s ease-in-out;
+                }
+                .active-tab {
+                    color: #000;
+                    font-weight: 800;
+                    border-bottom: 2px solid #007bff;
+                }
+            }
+
+            .tab-content {
+                padding: 10px 0px;
+                .color-picker-wrapper {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    .color-picker {
+                        width: 50px;
+                        padding: 4px;
+                        height: 38px;
+                        background: white;
+                    }
+                }
+            }
+
             h2 {
                 margin-bottom: 10px;
             }
@@ -196,24 +234,31 @@
     }
     .ec-draggable {
         .ec-event-body {
+            display: inline;
             .ec-event-details {
                 display: flex;
                 flex-direction: column;
-                .ec-time-title {
+                .ec-time-title-icon {
                     display: flex;
-                    .ec-event-time,
-                    .ec-event-title {
-                        font-size: 14px;
-                        color: white;
+                    align-items: center;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    .ec-time-title {
+                        display: flex;
+                        .ec-event-time,
+                        .ec-event-title {
+                            font-size: 14px;
+                            color: white;
+                        }
+                        .ec-event-title {
+                            margin-left: 4px;
+                        }
                     }
-                    .ec-event-title {
-                        margin-left: 4px;
-                    }
-                }
-                .ec-event-description {
-                    p {
-                        margin: 0px;
-                        font-size: 12px;
+                    .ec-event-description {
+                        p {
+                            margin: 0px;
+                            font-size: 12px;
+                        }
                     }
                 }
             }

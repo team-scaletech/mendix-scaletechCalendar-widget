@@ -20,6 +20,8 @@ export interface ScaletechCalendarContainerProps {
     descriptionData: ListAttributeValue<string>;
     eventParentResourceId: ListAttributeValue<Big>;
     eventChildrenResourceId: ListAttributeValue<Big>;
+    eventColor: ListAttributeValue<string>;
+    iconClass: ListAttributeValue<string>;
     childrenData: ListValue;
     childrenResourceId: ListAttributeValue<Big>;
     childrenTitle: ListAttributeValue<string>;
@@ -34,6 +36,8 @@ export interface ScaletechCalendarContainerProps {
     createDescriptionData?: EditableValue<string>;
     createEventParentId?: EditableValue<Big>;
     createEventChildrenId?: EditableValue<Big>;
+    createEventColor?: EditableValue<string>;
+    createIconClass?: EditableValue<string>;
     createParentId?: EditableValue<Big>;
     createParentName?: EditableValue<string>;
     createChildId?: EditableValue<Big>;
@@ -62,6 +66,8 @@ export interface ScaletechCalendarPreviewProps {
     descriptionData: string;
     eventParentResourceId: string;
     eventChildrenResourceId: string;
+    eventColor: string;
+    iconClass: string;
     childrenData: {} | { caption: string } | { type: string } | null;
     childrenResourceId: string;
     childrenTitle: string;
@@ -76,6 +82,8 @@ export interface ScaletechCalendarPreviewProps {
     createDescriptionData: string;
     createEventParentId: string;
     createEventChildrenId: string;
+    createEventColor: string;
+    createIconClass: string;
     createParentId: string;
     createParentName: string;
     createChildId: string;

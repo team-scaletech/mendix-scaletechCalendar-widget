@@ -2,10 +2,16 @@ import { FC, ReactElement, createElement, useEffect, useState } from "react";
 
 import { ScaletechCalendarContainerProps } from "../typings/ScaletechCalendarProps";
 import EventCalendar from "./components/EventCalendar";
-// import { GUID } from "mendix";
-
-import "./ui/ScaletechCalendar.css";
 import { EventVale, ResourceProps } from "./utils/interface";
+
+import { library } from "@fortawesome/fontawesome-svg-core";
+
+// import your icons
+import { fab } from "@fortawesome/free-brands-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
+
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "./ui/ScaletechCalendar.css";
 
 export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): ReactElement => {
     const {
@@ -15,6 +21,8 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         endDate,
         titleData,
         descriptionData,
+        eventColor,
+        iconClass,
         eventChildrenResourceId,
         eventParentResourceId,
         childrenData,
@@ -32,6 +40,8 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         createDescriptionData,
         createEventParentId,
         createEventChildrenId,
+        createEventColor,
+        createIconClass,
         createParentId,
         createParentName,
         createChildId,
@@ -51,7 +61,9 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
                 titleData: titleData.get(item).value || "",
                 descriptionData: descriptionData.get(item).value || "",
                 eventParentId: eventParentResourceId.get(item).value?.toString() || "",
-                eventChildrenId: eventChildrenResourceId.get(item).value?.toString() || ""
+                eventChildrenId: eventChildrenResourceId.get(item).value?.toString() || "",
+                eventColor: eventColor.get(item).value || "#007bff",
+                iconClass: iconClass.get(item).value || ""
             }));
             setEventValue(formattedEvents);
         }
@@ -123,6 +135,8 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             createDescriptionData={createDescriptionData}
             createParentId={createParentId}
             createParentTitle={createParentName}
+            createEventColor={createEventColor}
+            createIconClass={createIconClass}
             createChildId={createChildId}
             createChildTitle={createChildName}
             saveResourceAction={saveResourceAction}
@@ -132,3 +146,5 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         />
     );
 };
+
+library.add(fab, far);
