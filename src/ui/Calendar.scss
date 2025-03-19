@@ -244,12 +244,14 @@
             .ec-event-details {
                 display: flex;
                 flex-direction: column;
+                padding: 5px;
                 .ec-time-title-icon {
                     display: flex;
                     align-items: center;
                     flex-direction: row;
                     justify-content: space-between;
                     .ec-time-title {
+                        width: 190px;
                         display: flex;
                         .ec-event-time,
                         .ec-event-title {
@@ -263,11 +265,11 @@
                     .ec-event-icon {
                         font-size: 18px;
                     }
-                    .ec-event-description {
-                        p {
-                            margin: 0px;
-                            font-size: 12px;
-                        }
+                }
+                .ec-event-description {
+                    p {
+                        margin: 0px;
+                        font-size: 12px;
                     }
                 }
             }
