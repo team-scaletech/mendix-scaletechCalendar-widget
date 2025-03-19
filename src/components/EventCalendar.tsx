@@ -9,6 +9,7 @@ import ResourceTimeline from "@event-calendar/resource-timeline";
 import ResourceTimeGrid from "@event-calendar/resource-time-grid";
 import Interaction from "@event-calendar/interaction";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 import { Big } from "big.js";
 
@@ -188,6 +189,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
             } else {
                 calendarInstance.setOption("resources", resource);
             }
+
             if (currentView === "dayGridMonth") {
                 calendarInstance.setOption("eventContent", arg => {
                     const { event } = arg;
@@ -196,13 +198,11 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                     const formattedTime = date.toLocaleTimeString("en-US", options as any);
                     const title = event.title || "";
                     const description = event.extendedProps?.description || "";
-                    const Icon = event.extendedProps.iconClass || "";
+                    const iconClass = event.extendedProps?.iconClass || ""; // Default to empty string
 
-                    // Create the main wrapper div
                     const wrapper = document.createElement("div");
                     wrapper.className = "ec-event-details";
 
-                    // Time & Title container
                     const timeTitleIconContainer = document.createElement("div");
                     timeTitleIconContainer.className = "ec-time-title-icon";
 
@@ -217,27 +217,24 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                     titleDiv.className = "ec-event-title";
                     titleDiv.textContent = title as string;
 
-                    timeTitleIconContainer.appendChild(timeTitleContainer);
-
-                    // Icon container
-                    const iconDiv = document.createElement("div");
-                    iconDiv.className = "ec-event-icon";
-
-                    // Create FontAwesomeIcon component
-                    const fontAwesomeIcon = <FontAwesomeIcon icon={Icon as any} />;
-                    const fontAwesomeContainer = document.createElement("span");
-
-                    // Render React component into real DOM node
-                    ReactDOM.render(fontAwesomeIcon, fontAwesomeContainer);
-
-                    // Append icon elements
-
-                    iconDiv.appendChild(fontAwesomeContainer);
-
-                    // Append everything together
                     timeTitleContainer.appendChild(timeDiv);
                     timeTitleContainer.appendChild(titleDiv);
-                    timeTitleIconContainer.appendChild(iconDiv);
+                    timeTitleIconContainer.appendChild(timeTitleContainer);
+
+                    // Only render icon if iconClass is valid
+                    if (iconClass) {
+                        const iconDiv = document.createElement("div");
+                        iconDiv.className = "ec-event-icon";
+
+                        // Assume iconClass is a string like 'coffee' and prefix with 'fas'
+                        const iconProp: IconProp = ["fas", iconClass as any]; // Adjust prefix as needed
+                        const fontAwesomeIcon = <FontAwesomeIcon icon={iconProp} />;
+                        const fontAwesomeContainer = document.createElement("span");
+
+                        ReactDOM.render(fontAwesomeIcon, fontAwesomeContainer);
+                        iconDiv.appendChild(fontAwesomeContainer);
+                        timeTitleIconContainer.appendChild(iconDiv);
+                    }
 
                     wrapper.appendChild(timeTitleIconContainer);
 
@@ -266,20 +263,21 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                     titleDiv.className = "ec-event-title";
                     titleDiv.textContent = title as string;
 
-                    const iconDiv = document.createElement("div");
-                    iconDiv.className = "ec-event-icon";
-
-                    // Create FontAwesomeIcon component
-                    const fontAwesomeIcon = <FontAwesomeIcon icon={iconClass as any} />;
-                    const fontAwesomeContainer = document.createElement("span");
-
-                    // Render React component into real DOM node
-                    ReactDOM.render(fontAwesomeIcon, fontAwesomeContainer);
-
-                    iconDiv.appendChild(fontAwesomeContainer);
-
                     timeTitleContainer.appendChild(titleDiv);
-                    timeTitleContainer.appendChild(iconDiv);
+
+                    // Only render icon if iconClass is valid
+                    if (iconClass) {
+                        const iconDiv = document.createElement("div");
+                        iconDiv.className = "ec-event-icon";
+
+                        const iconProp: IconProp = ["fas", iconClass as any]; // Adjust prefix as needed
+                        const fontAwesomeIcon = <FontAwesomeIcon icon={iconProp} />;
+                        const fontAwesomeContainer = document.createElement("span");
+
+                        ReactDOM.render(fontAwesomeIcon, fontAwesomeContainer);
+                        iconDiv.appendChild(fontAwesomeContainer);
+                        timeTitleContainer.appendChild(iconDiv);
+                    }
 
                     wrapper.appendChild(timeTitleContainer);
 

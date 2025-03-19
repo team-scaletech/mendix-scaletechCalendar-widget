@@ -14,7 +14,7 @@ const ResourcesModal: FC<ResourcesModalProps> = ({
     createChildTitle
 }) => {
     const [newResourceTitle, setNewResourceTitle] = useState("");
-    const [parentResourceId, setParentResourceId] = useState<number | "new">("new");
+    const [parentResourceId, setParentResourceId] = useState("new");
 
     const handleAddResource = () => {
         if (!newResourceTitle.trim()) return;
@@ -23,6 +23,8 @@ const ResourcesModal: FC<ResourcesModalProps> = ({
         if (parentResourceId === "new") {
             createParentId?.setValue(numericId);
             createParentTitle?.setValue(newResourceTitle);
+            createChildId?.setValue(new Big(0));
+            createChildTitle?.setValue("");
         } else {
             createParentId?.setValue(new Big(parentResourceId));
             createChildId?.setValue(numericId);
@@ -57,7 +59,7 @@ const ResourcesModal: FC<ResourcesModalProps> = ({
                     <label>Parent Resource:</label>
                     <select
                         value={parentResourceId}
-                        onChange={e => setParentResourceId(e.target.value === "new" ? "new" : Number(e.target.value))}
+                        onChange={e => setParentResourceId(e.target.value === "new" ? "new" : e.target.value)}
                     >
                         <option value="new">Create as Parent Resource</option>
                         {resources.map(resource => (
