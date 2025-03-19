@@ -53,7 +53,13 @@
                         padding: 4px;
                         height: 38px;
                         background: white;
+                        cursor: pointer;
                     }
+                }
+                .icon-wrapper {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
                 }
             }
 

@@ -1,4 +1,4 @@
-import { CSSProperties } from "react";
+import { CSSProperties, ReactNode } from "react";
 import { ActionValue, EditableValue } from "mendix";
 
 export interface EventVale {
@@ -98,4 +98,11 @@ export interface EventDetailProps {
     EditModalShow: () => void;
     eventObject: CalendarEvent;
     resources: ResourceProps[];
+}
+
+export interface TooltipProps {
+    direction: string;
+    content: string;
+    children: ReactNode;
+    delay?: number;
 }

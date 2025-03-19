@@ -1,8 +1,9 @@
 import { createElement, FC, useEffect, useState } from "react";
 
 import TextEditor from "./TextEditor";
-import { CloseIcon } from "src/icon/icon";
+import { CloseIcon, InfoIcon } from "src/icon/icon";
 import { ModalProps } from "src/utils/interface";
+import Tooltip from "../ToolTip";
 
 const EventModal: FC<ModalProps> = props => {
     const { hideModal, handleSubmit, eventObject, setEventObject, resources } = props;
@@ -53,7 +54,7 @@ const EventModal: FC<ModalProps> = props => {
                     <div className="tab-content">
                         <div className="time-wrapper">
                             <div>
-                                <label>Start Time:</label>
+                                <label>Start Time</label>
                                 <input
                                     type="datetime-local"
                                     value={eventObject.start as any}
@@ -61,7 +62,7 @@ const EventModal: FC<ModalProps> = props => {
                                 />
                             </div>
                             <div>
-                                <label>End Time:</label>
+                                <label>End Time</label>
                                 <input
                                     type="datetime-local"
                                     value={eventObject.end as any}
@@ -69,7 +70,7 @@ const EventModal: FC<ModalProps> = props => {
                                 />
                             </div>
                             <div>
-                                <label>Parent Resource:</label>
+                                <label>Parent Resource</label>
                                 <select
                                     value={selectedParentId ?? ""}
                                     onChange={e => {
@@ -89,7 +90,7 @@ const EventModal: FC<ModalProps> = props => {
                             </div>
                             {selectedParent?.children && selectedParent.children.length > 0 && (
                                 <div>
-                                    <label>Children Resource:</label>
+                                    <label>Children Resource</label>
                                     <select
                                         value={selectedChildId ?? ""}
                                         onChange={e => {
@@ -109,7 +110,7 @@ const EventModal: FC<ModalProps> = props => {
                             )}
                         </div>
                         <div>
-                            <label>Title:</label>
+                            <label>Title</label>
                             <input
                                 type="text"
                                 value={eventObject.title}
@@ -123,7 +124,7 @@ const EventModal: FC<ModalProps> = props => {
                 ) : (
                     <div className="tab-content">
                         <div>
-                            <label>Event Color:</label>
+                            <label>Event Color</label>
                             <div className="color-picker-wrapper">
                                 <input
                                     type="text"
@@ -139,10 +140,19 @@ const EventModal: FC<ModalProps> = props => {
                             </div>
                         </div>
                         <div>
-                            <label>Icon class:</label>
+                            <div className="icon-wrapper">
+                                <label>Icon class</label>
+                                <Tooltip
+                                    content=" go to the FontAwesome icons page (https://fontawesome.com/v4/icons) for the icon class"
+                                    direction="bottom"
+                                >
+                                    <InfoIcon width="18px" height="18px" />
+                                </Tooltip>
+                            </div>
                             <input
                                 type="text"
                                 value={eventObject.extendedProps.iconClass}
+                                placeholder="fa fa-briefcase"
                                 onChange={e =>
                                     setEventObject({
                                         ...eventObject,
