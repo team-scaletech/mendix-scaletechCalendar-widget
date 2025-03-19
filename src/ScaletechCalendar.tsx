@@ -9,6 +9,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 // import your icons
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
 
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./ui/ScaletechCalendar.css";
@@ -47,7 +48,10 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
         createChildId,
         createChildName,
         saveResourceAction,
-        eventDropAction
+        eventDropAction,
+        isDescription,
+        class: customClass,
+        style
     } = props;
     const [eventValue, setEventValue] = useState<EventVale[]>([]);
     const [resource, setResource] = useState<ResourceProps[]>([]);
@@ -143,8 +147,11 @@ export const ScaletechCalendar: FC<ScaletechCalendarContainerProps> = (props): R
             createEventParentId={createEventParentId}
             createEventChildrenId={createEventChildrenId}
             eventDropAction={eventDropAction}
+            isDescription={isDescription}
+            className={customClass || ""}
+            style={style}
         />
     );
 };
 
-library.add(fab, far);
+library.add(fab, fas, far);

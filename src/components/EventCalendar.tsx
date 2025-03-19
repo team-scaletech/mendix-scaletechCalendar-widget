@@ -39,7 +39,10 @@ const EventCalendar: FC<EventCalendarProps> = props => {
         createChildId,
         createChildTitle,
         saveResourceAction,
-        eventDropAction
+        eventDropAction,
+        isDescription,
+        className,
+        style
     } = props;
     const calendarRef = useRef<HTMLDivElement>(null);
     const [calendarInstance, setCalendarInstance] = useState<Calendar | null>(null);
@@ -218,7 +221,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
 
                     // Icon container
                     const iconDiv = document.createElement("div");
-                    iconDiv.className = "ec-event-time";
+                    iconDiv.className = "ec-event-icon";
 
                     // Create FontAwesomeIcon component
                     const fontAwesomeIcon = <FontAwesomeIcon icon={Icon as any} />;
@@ -238,7 +241,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
 
                     wrapper.appendChild(timeTitleIconContainer);
 
-                    if (description) {
+                    if (description && isDescription) {
                         const descDiv = document.createElement("div");
                         descDiv.className = "ec-event-description";
                         descDiv.innerHTML = description as string;
@@ -264,7 +267,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
                     titleDiv.textContent = title as string;
 
                     const iconDiv = document.createElement("div");
-                    iconDiv.className = "ec-event-time";
+                    iconDiv.className = "ec-event-icon";
 
                     // Create FontAwesomeIcon component
                     const fontAwesomeIcon = <FontAwesomeIcon icon={iconClass as any} />;
@@ -478,7 +481,7 @@ const EventCalendar: FC<EventCalendarProps> = props => {
     };
 
     return (
-        <div className="calendar-wrapper">
+        <div className={`calendar-wrapper ${className}`} style={style}>
             <div ref={calendarRef}></div>
             {isShowModal.detail && (
                 <EventDetail

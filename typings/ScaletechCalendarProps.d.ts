@@ -29,6 +29,7 @@ export interface ScaletechCalendarContainerProps {
     parentData: ListValue;
     parentResourceId: ListAttributeValue<Big>;
     parentTitle: ListAttributeValue<string>;
+    isDescription: boolean;
     createEventId?: EditableValue<Big>;
     createStartDate?: EditableValue<string>;
     createEndDate?: EditableValue<string>;
@@ -75,6 +76,7 @@ export interface ScaletechCalendarPreviewProps {
     parentData: {} | { caption: string } | { type: string } | null;
     parentResourceId: string;
     parentTitle: string;
+    isDescription: boolean;
     createEventId: string;
     createStartDate: string;
     createEndDate: string;
