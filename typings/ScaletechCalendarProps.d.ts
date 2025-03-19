@@ -20,6 +20,8 @@ export interface ScaletechCalendarContainerProps {
     descriptionData: ListAttributeValue<string>;
     eventParentResourceId: ListAttributeValue<Big>;
     eventChildrenResourceId: ListAttributeValue<Big>;
+    eventColor: ListAttributeValue<string>;
+    iconClass: ListAttributeValue<string>;
     childrenData: ListValue;
     childrenResourceId: ListAttributeValue<Big>;
     childrenTitle: ListAttributeValue<string>;
@@ -27,6 +29,7 @@ export interface ScaletechCalendarContainerProps {
     parentData: ListValue;
     parentResourceId: ListAttributeValue<Big>;
     parentTitle: ListAttributeValue<string>;
+    isDescription: boolean;
     createEventId?: EditableValue<Big>;
     createStartDate?: EditableValue<string>;
     createEndDate?: EditableValue<string>;
@@ -34,13 +37,15 @@ export interface ScaletechCalendarContainerProps {
     createDescriptionData?: EditableValue<string>;
     createEventParentId?: EditableValue<Big>;
     createEventChildrenId?: EditableValue<Big>;
+    createEventColor?: EditableValue<string>;
+    createIconClass?: EditableValue<string>;
     createParentId?: EditableValue<Big>;
     createParentName?: EditableValue<string>;
     createChildId?: EditableValue<Big>;
     createChildName?: EditableValue<string>;
+    eventDropAction?: ActionValue;
     saveEventAction?: ActionValue;
     saveResourceAction?: ActionValue;
-    eventDropAction?: ActionValue;
 }
 
 export interface ScaletechCalendarPreviewProps {
@@ -62,6 +67,8 @@ export interface ScaletechCalendarPreviewProps {
     descriptionData: string;
     eventParentResourceId: string;
     eventChildrenResourceId: string;
+    eventColor: string;
+    iconClass: string;
     childrenData: {} | { caption: string } | { type: string } | null;
     childrenResourceId: string;
     childrenTitle: string;
@@ -69,6 +76,7 @@ export interface ScaletechCalendarPreviewProps {
     parentData: {} | { caption: string } | { type: string } | null;
     parentResourceId: string;
     parentTitle: string;
+    isDescription: boolean;
     createEventId: string;
     createStartDate: string;
     createEndDate: string;
@@ -76,11 +84,13 @@ export interface ScaletechCalendarPreviewProps {
     createDescriptionData: string;
     createEventParentId: string;
     createEventChildrenId: string;
+    createEventColor: string;
+    createIconClass: string;
     createParentId: string;
     createParentName: string;
     createChildId: string;
     createChildName: string;
+    eventDropAction: {} | null;
     saveEventAction: {} | null;
     saveResourceAction: {} | null;
-    eventDropAction: {} | null;
 }

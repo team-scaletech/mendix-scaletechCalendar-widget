@@ -61,7 +61,7 @@ const EventDetail: FC<EventDetailProps> = props => {
                 <div className="event-title-wrapper">
                     <div className="event-title">
                         <EventIcon height="22px" width="22px" style={{ marginTop: "8px" }} />
-                        <div>
+                        <div className="title-div">
                             <h2>{eventObject.title}</h2>
                             <h6> {new Date(eventObject.start).toDateString()}</h6>
                         </div>
@@ -69,14 +69,20 @@ const EventDetail: FC<EventDetailProps> = props => {
                 </div>
                 <div className="event-schedule-wrapper">
                     <div className="event-schedule">
-                        <StartTimeIcon height="22px" width="22px" />
+                        <h6>
+                            Start time
+                            <StartTimeIcon height="22px" width="22px" />:
+                        </h6>
                         <p>{`${new Date(eventObject.start).getHours()}:${new Date(eventObject.start)
                             .getMinutes()
                             .toString()
                             .padStart(2, "0")}`}</p>
                     </div>
                     <div className="event-schedule">
-                        <EndTimeIcon height="22px" width="22px" />
+                        <h6>
+                            End time
+                            <EndTimeIcon height="22px" width="22px" />:
+                        </h6>
                         <p>{`${new Date(eventObject.end).getHours()}:${new Date(eventObject.end)
                             .getMinutes()
                             .toString()
@@ -84,11 +90,17 @@ const EventDetail: FC<EventDetailProps> = props => {
                     </div>
 
                     <div className="event-schedule">
-                        <ParentResourceIcon height="22px" width="22px" />
+                        <h6>
+                            Parent resource
+                            <ParentResourceIcon height="22px" width="22px" />:
+                        </h6>
                         <p>{selectedParent || "-"}</p>
                     </div>
                     <div className="event-schedule">
-                        <ChildResourceIcon height="22px" width="22px" />
+                        <h6>
+                            Children resource
+                            <ChildResourceIcon height="22px" width="22px" />:
+                        </h6>
                         <p>{selectedChild || "-"}</p>
                     </div>
                 </div>

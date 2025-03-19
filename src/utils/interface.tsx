@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import { ActionValue, EditableValue } from "mendix";
 
 export interface EventVale {
@@ -8,6 +9,8 @@ export interface EventVale {
     descriptionData: string;
     eventParentId: string;
     eventChildrenId: string;
+    eventColor: string;
+    iconClass: string;
 }
 export interface ResourceValue {
     id: string;
@@ -26,12 +29,17 @@ export interface EventCalendarProps {
     createDescriptionData?: EditableValue<string>;
     createEventParentId?: EditableValue<Big>;
     createEventChildrenId?: EditableValue<Big>;
+    createEventColor?: EditableValue<string>;
+    createIconClass?: EditableValue<string>;
     createParentId?: EditableValue<Big>;
     createParentTitle?: EditableValue<string>;
     createChildId?: EditableValue<Big>;
     createChildTitle?: EditableValue<string>;
     saveResourceAction?: ActionValue;
     eventDropAction?: ActionValue;
+    isDescription?: boolean;
+    className?: string;
+    style?: CSSProperties;
 }
 
 export interface CalendarEvent {
@@ -51,6 +59,7 @@ export interface CalendarEvent {
     styles: string[]; // Use classNames instead of styles
     extendedProps: {
         description: string;
+        iconClass: string;
     };
 }
 
